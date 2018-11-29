@@ -1,7 +1,7 @@
 
-# react-native-cbl
+# React-Native-Couchbase-Lite
 
-react-native-cbl is a React Native module providing an easy way to create offline-first, lightweight and performant mobile application on both iOS and Android platforms. This is an all-native wrapper over Couchbase Lite, which is a document-oriented database running right on the mobile devices.
+React-Native-Couchbase-Lite is a React Native module providing an easy way to create offline-first, lightweight and performant hybrid mobile application for both iOS and Android platforms. This is an all-native wrapper over Couchbase Lite, which is a document-oriented database running right on the mobile devices. This project is heavily inspired from bjornd's work. I want to thank him for all his efforts.
 
 ## Getting started
 
@@ -46,7 +46,7 @@ import CouchbaseLite, { CBLConnection, CBLConnector } from 'react-native-cbl'
 
 const cblConnection = new CBLConnection({
   dbName: 'mydb',
-  syncGatewayUrl: 'http://sg.myapp.com/mydb',
+  syncGatewayUrl: 'http://sg.dummyapp.com/mydb',
   views: { ... },
 })
 
