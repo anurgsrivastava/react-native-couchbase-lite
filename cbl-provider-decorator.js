@@ -2,7 +2,7 @@ import React from 'react'
 import { NativeEventEmitter } from 'react-native'
 import { entriesToObject } from './utils'
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import CouchbaseLite from './react-native-cbl'
+import CouchbaseLite from './react-native-couchbase-lite'
 import PropTypes from 'prop-types'
 import cblQueryParser from 'couchbase-lite-query-parser'
 

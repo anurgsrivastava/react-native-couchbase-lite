@@ -5,7 +5,7 @@ title: Accessing Couchbase Lite from React Native
 The first thing you need to do to access Couchbase Lite database is to open it:
 
 ```
-import CouchbaseLite from 'react-native-cbl'
+import CouchbaseLite from 'react-native-couchbase-lite'
 
 CouchbaseLite.openDb('mydbname').then( () => {
     //when database is opened

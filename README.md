@@ -5,15 +5,15 @@ React-Native-Couchbase-Lite is a React Native module providing an easy way to cr
 
 ## Getting started
 
-`$ npm install react-native-cbl --save`
+`$ npm install react-native-couchbase-lite --save`
 
 or
 
-`$ yarn add react-native-cbl`
+`$ yarn add react-native-couchbase-lite`
 
 ### Mostly automatic installation
 
-`$ react-native link react-native-cbl`
+`$ react-native link react-native-couchbase-lite`
 
 ### Manual installation
 
@@ -21,7 +21,7 @@ or
 #### iOS
 
 1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-cbl` and add `RNReactNativeCbl.xcodeproj`
+2. Go to `node_modules` ➜ `react-native-couchbase-lite` and add `RNReactNativeCbl.xcodeproj`
 3. In XCode, in the project navigator, select your project. Add `libRNReactNativeCbl.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
 4. Run your project (`Cmd+R`)<
 
@@ -32,17 +32,17 @@ or
   - Add `new RNReactNativeCblPackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
-  	include ':react-native-cbl'
-  	project(':react-native-cbl').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-cbl/android')
+  	include ':react-native-couchbase-lite'
+  	project(':react-native-couchbase-lite').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-couchbase-lite/android')
   	```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
   	```
-      compile project(':react-native-cbl')
+      compile project(':react-native-couchbase-lite')
   	```
 
 ## Usage
 ```javascript
-import CouchbaseLite, { CBLConnection, CBLConnector } from 'react-native-cbl'
+import CouchbaseLite, { CBLConnection, CBLConnector } from 'react-native-couchbase-lite'
 
 const cblConnection = new CBLConnection({
   dbName: 'mydb',

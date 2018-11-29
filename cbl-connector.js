@@ -1,5 +1,5 @@
 import React from 'react'
-import CouchbaseLite from './react-native-cbl'
+import CouchbaseLite from './react-native-couchbase-lite'
 import PropTypes from 'prop-types'
 
 export class CBLConnection {

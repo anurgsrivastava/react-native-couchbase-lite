@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, NativeModules, findNodeHandle, requireNativeComponent } from 'react-native'
-import { cblConnectAttachmentToImage } from 'react-native-cbl'
+import { cblConnectAttachmentToImage } from 'react-native-couchbase-lite'
 
 const { RNReactNativeCbl } = NativeModules
 const RNReactNativeCblImage = requireNativeComponent('RNReactNativeCblImage', null)

@@ -1,9 +1,9 @@
 ---
 title: cblProvider
 ---
-react-native-cbl provides a very convenient way to access data from Couchbase Lite using HOC pattern. To activate this ability for components you first need to add `<CBLConnector>` component to your application, so it will be a ancestor for any underlying component requiring access to Couchbase Lite. This is somewhat similar to `<Provider>` component in redux:
+react-native-couchbase-lite provides a very convenient way to access data from Couchbase Lite using HOC pattern. To activate this ability for components you first need to add `<CBLConnector>` component to your application, so it will be a ancestor for any underlying component requiring access to Couchbase Lite. This is somewhat similar to `<Provider>` component in redux:
 ```
-import { CBLConnection, CBLConnector } from 'react-native-cbl'
+import { CBLConnection, CBLConnector } from 'react-native-couchbase-lite'
 
 const cblConnection = new CBLConnection({
   dbName: 'mydb',

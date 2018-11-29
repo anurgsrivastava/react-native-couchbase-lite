@@ -4,11 +4,11 @@ title: Installation
 ---
 Install package with npm:
 ```
-npm install react-native-cbl --save
+npm install react-native-couchbase-lite --save
 ```
 or yarn:
 ```
-yarn add react-native-cbl
+yarn add react-native-couchbase-lite
 ```
 ## iOS
 Download [Couchbase Lite version 1.4.1](https://www.couchbase.com/downloads/thankyou/community?product=couchbase-lite&version=1.4.1&platform=ios&addon=false&beta=false) for iOS from official website.
