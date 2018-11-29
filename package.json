@@ -11,7 +11,7 @@
     "couchbase-lite",
     "offline-first"
   ],
-  "repository": "bjornd/react-native-cbl",
+  "repository": "imanurg/react-native-couchbase-lite",
   "author": "",
   "license": "MIT",
   "peerDependencies": {
