@@ -22,3 +22,4 @@ export class CBLImage extends React.Component {
     )
   }
 }
+
