@@ -1,0 +1,25 @@
+{
+  "name": "react-native-cbl",
+  "version": "1.0.1",
+  "description": "Couchbase Lite module for React Native",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native",
+    "couchbase-lite",
+    "offline-first"
+  ],
+  "repository": "bjornd/react-native-cbl",
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react-native": "^0.41.2"
+  },
+  "dependencies": {
+    "couchbase-lite-query-parser": "^1.0.2",
+    "fast-deep-equal": "^2.0.1",
+    "hoist-non-react-statics": "^2.5.0"
+  }
+}
