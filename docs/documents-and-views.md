@@ -8,4 +8,4 @@ The two basic entities defining how you store and retrieve data in Couchbase are
 - Filtering
 - Grouping and Aggregation
 
-You can read more about Documents in Views in the official [Couchbase Lite tutorial](https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/data-modeling/index.html)
+You can read more about Documents in Views in the official [Couchbase Lite tutorial](https://docs.couchbase.com/couchbase-lite/2.1/java.html)
