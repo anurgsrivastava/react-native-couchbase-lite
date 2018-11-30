@@ -78,7 +78,7 @@ By default cblProvider not only retrieve data once, it also listens to any relat
   },
 }))
 ```
-View queries support additional option `params`, which modifies the way view is queried by Couchbase Lite. The full list of available options is available at the Couchbase Lite [Query API reference](https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/query/index.html#creating-and-configuring-queries).
+View queries support additional option `params`, which modifies the way view is queried by Couchbase Lite. The full list of available options is available at the Couchbase Lite [Query API reference]https://docs.couchbase.com/couchbase-lite/2.1/index.html]
 ```
 @cblProvider( props => ({
   items: {
