@@ -32,6 +32,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.imanurg:react-native-couchbase-lite:3ea238d227'
+    implementation 'com.github.imanurg:react-native-couchbase-lite' //add url here after uploading
     compile 'com.facebook.react:react-native:+'
 }
