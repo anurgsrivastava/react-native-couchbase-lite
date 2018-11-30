@@ -11,7 +11,7 @@ or yarn:
 yarn add react-native-couchbase-lite
 ```
 ## iOS
-Download [Couchbase Lite version 2.1.2](https://www.couchbase.com/downloads/thankyou/community?product=couchbase-lite&version=1.4.1&platform=ios&addon=false&beta=false) for iOS from official website.
+Download [Couchbase Lite version 2.1.2](https://www.couchbase.com/downloads?family=mobile) for iOS from official website.
 
 Unzip archive and drag and drop the following files to Frameworks folder of your iOS project in Xcode:
 - CouchbaseLite.framework
