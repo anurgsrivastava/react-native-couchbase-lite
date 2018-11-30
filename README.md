@@ -3,6 +3,8 @@
 
 React-Native-Couchbase-Lite is a React Native module providing an easy way to create offline-first, lightweight and performant hybrid mobile application for both iOS and Android platforms. This is an all-native wrapper over Couchbase Lite, which is a document-oriented database running right on the mobile devices. This project is heavily inspired from bjornd's work. I want to thank him for all his efforts.
 
+(Currently npm install will not work. Project isn't uploaded to npm.)
+
 ## Getting started
 
 `$ npm install react-native-couchbase-lite --save`
