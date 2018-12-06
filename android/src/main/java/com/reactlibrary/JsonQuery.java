@@ -1,6 +1,6 @@
 package com.reactlibrary;
 
-import com.couchbase.lite.AbstractQuery;
+//import com.couchbase.lite.AbstractQuery;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class JsonQuery extends AbstractQuery {
+class JsonQuery { //extends AbstractQuery {
     private Map<String, Object> jsonSchema;
     private Database database;
 

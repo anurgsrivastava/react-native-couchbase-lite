@@ -12,12 +12,12 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 23
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion 27
+        minSdkVersion 19
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -28,10 +28,17 @@ android {
 
 repositories {
     mavenCentral()
-    // maven { url 'https://jitpack.io' } repository url after uploading
+    jcenter()
+    maven {
+            url "http://mobile.maven.couchbase.com/maven2/dev/"
+    }
+    maven { 
+        url 'https://jitpack.io' 
+    }
 }
 
 dependencies {
-    implementation 'com.github.imanurg:react-native-couchbase-lite' //add url here after uploading
+    compile 'com.couchbase.lite:couchbase-lite-android-ee:2.1.2'
+    //implementation 'com.github.imanurg:react-native-couchbase-lite'
     compile 'com.facebook.react:react-native:+'
 }

@@ -195,7 +195,7 @@ public class RNReactNativeCblModule extends ReactContextBaseJavaModule {
   public void createLiveQuery(ReadableArray params, Promise promise) {
     final String uuid = UUID.randomUUID().toString();
     final RNReactNativeCblModule self = this;
-    Query query = this.queryFromJson(params);
+    Query query = (Query)this.queryFromJson(params);
     query.addChangeListener(new QueryChangeListener() {
       public void changed(QueryChange change) {
         WritableMap eventParams = Arguments.createMap();
@@ -224,7 +224,7 @@ public class RNReactNativeCblModule extends ReactContextBaseJavaModule {
     promise.resolve(null);
   }
 
-  private Query queryFromJson(ReadableArray params) {
+  private JsonQuery queryFromJson(ReadableArray params) {
     List select = ConversionUtil.toList( params );
     return new JsonQuery((Map)select.get(1), this.db);
   }
