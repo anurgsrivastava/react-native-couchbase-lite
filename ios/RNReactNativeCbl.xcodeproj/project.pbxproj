@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		090D1F3521B9573F000A7602 /* CouchbaseEPosBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3021B9573E000A7602 /* CouchbaseEPosBridge.m */; };
+		090D1F3621B9573F000A7602 /* CouchbaseEPos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3221B9573E000A7602 /* CouchbaseEPos.swift */; };
+		090D1F3721B9573F000A7602 /* BridgeEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3321B9573E000A7602 /* BridgeEmitter.m */; };
+		090D1F3821B9573F000A7602 /* EmitterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3421B9573F000A7602 /* EmitterManager.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNReactNativeCbl.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNReactNativeCbl.m */; };
 		D1728B882081F49200838B93 /* RNReactNativeCblImage.m in Sources */ = {isa = PBXBuildFile; fileRef = D1728B762081F49200838B93 /* RNReactNativeCblImage.m */; };
 		D1728B8C2081F95700838B93 /* RNReactNativeCblImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D1728B8B2081F95700838B93 /* RNReactNativeCblImageManager.m */; };
@@ -141,6 +145,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		090D1F2C21B9573C000A7602 /* RNReactNativeCbl-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RNReactNativeCbl-Bridging-Header.h"; sourceTree = "<group>"; };
+		090D1F2D21B9573D000A7602 /* CouchbaseEPosBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseEPosBridge.h; sourceTree = "<group>"; };
+		090D1F2E21B9573D000A7602 /* BridgeEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BridgeEmitter.h; sourceTree = "<group>"; };
+		090D1F3021B9573E000A7602 /* CouchbaseEPosBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CouchbaseEPosBridge.m; sourceTree = "<group>"; };
+		090D1F3121B9573E000A7602 /* EmitterManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmitterManager.h; sourceTree = "<group>"; };
+		090D1F3221B9573E000A7602 /* CouchbaseEPos.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CouchbaseEPos.swift; sourceTree = "<group>"; };
+		090D1F3321B9573E000A7602 /* BridgeEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BridgeEmitter.m; sourceTree = "<group>"; };
+		090D1F3421B9573F000A7602 /* EmitterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmitterManager.m; sourceTree = "<group>"; };
 		134814201AA4EA6300B7C361 /* libRNReactNativeCbl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNReactNativeCbl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E7B5881CC2AC0600A0062D /* RNReactNativeCbl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNReactNativeCbl.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNReactNativeCbl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNReactNativeCbl.m; sourceTree = "<group>"; };
@@ -183,6 +195,14 @@
 				D1728B762081F49200838B93 /* RNReactNativeCblImage.m */,
 				D1728B8A2081F95700838B93 /* RNReactNativeCblImageManager.h */,
 				D1728B8B2081F95700838B93 /* RNReactNativeCblImageManager.m */,
+				090D1F2E21B9573D000A7602 /* BridgeEmitter.h */,
+				090D1F3321B9573E000A7602 /* BridgeEmitter.m */,
+				090D1F3221B9573E000A7602 /* CouchbaseEPos.swift */,
+				090D1F2D21B9573D000A7602 /* CouchbaseEPosBridge.h */,
+				090D1F3021B9573E000A7602 /* CouchbaseEPosBridge.m */,
+				090D1F3121B9573E000A7602 /* EmitterManager.h */,
+				090D1F3421B9573F000A7602 /* EmitterManager.m */,
+				090D1F2C21B9573C000A7602 /* RNReactNativeCbl-Bridging-Header.h */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				D1728A66207A625D00838B93 /* React.xcodeproj */,
 			);
@@ -237,11 +257,15 @@
 		58B511D31A9E6C8500147676 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					New,
+				);
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					58B511DA1A9E6C8500147676 = {
 						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
@@ -388,10 +412,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				090D1F3821B9573F000A7602 /* EmitterManager.m in Sources */,
+				090D1F3621B9573F000A7602 /* CouchbaseEPos.swift in Sources */,
 				D1728B882081F49200838B93 /* RNReactNativeCblImage.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNReactNativeCbl.m in Sources */,
 				D1728B8C2081F95700838B93 /* RNReactNativeCblImageManager.m in Sources */,
 				D194A72B20FDBB67006BF098 /* RNReactNativeQuery.m in Sources */,
+				090D1F3721B9573F000A7602 /* BridgeEmitter.m in Sources */,
+				090D1F3521B9573F000A7602 /* CouchbaseEPosBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +510,7 @@
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -490,16 +519,21 @@
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../../react-native/Libraries/Image",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNReactNativeCbl;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "RNReactNativeCbl-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
 		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -508,10 +542,13 @@
 					"$(SRCROOT)/../../react-native/React/**",
 					"$(SRCROOT)/../../react-native/Libraries/Image",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = RNReactNativeCbl;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "RNReactNativeCbl-Bridging-Header.h";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
