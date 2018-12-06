@@ -65,4 +65,5 @@ export default class App extends React.Component {
     )
   }
 }
+To be used differently
 ```
