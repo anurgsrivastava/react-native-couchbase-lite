@@ -13,42 +13,41 @@
 
 RCT_EXPORT_MODULE(CouchbaseEPosBridge);
 
-RCT_EXPORT_METHOD(saveDataWithKey:(NSString *)key withData:(NSString *)data) {
-  CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
-  [objCouchbaseEPos saveDataWithKey: key data: data];
-  NSLog(@"Data saved");
+RCT_EXPORT_METHOD(saveDocument:(NSString *)key document:(NSString *)doc resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos saveDocumentWithKey: key doc:doc completionBlock:^(NSString * strDoc) {
+        if ([strDoc isEqualToString:Constants.SUCCESS]) {
+            resolve(strDoc);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, Constants.ERROR_IN_SAVING, error);
+        }
+    }];
 }
 
-RCT_EXPORT_METHOD(getDataWithPromisses:(NSString *)key callback:(RCTResponseSenderBlock)callback) {
-  
-  CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
-  [objCouchbaseEPos getDataWithPromissesWithKey: key completionBlock:^(NSString * strData) {
-    if (![strData isEqual: @"Error"]) {
-      callback(@[@"", strData]);
-//      NSLog(@"Loading done");
-    } else {
-      callback(@[@"Error", @""]);
-//      NSLog(@"Loading done with Error");
-    }
-  }];
+RCT_EXPORT_METHOD(getDocument:(NSString *)key resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos getDocumentWithKey: key completionBlock:^(NSString * strData) {
+        if (![strData isEqualToString: Constants.ERROR]) {
+            resolve(strData);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, Constants.ERROR_IN_FETCHING, error);
+        }
+    }];
 }
 
-RCT_EXPORT_METHOD(getData:(NSString *)key resolver:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject) {
-  
-  CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
-  [objCouchbaseEPos getDataWithPromissesWithKey: key completionBlock:^(NSString * strData) {
-    if (![strData isEqual: @"Error"]) {
-      resolve(strData);
-//      callback(@[@"", strData]);
-      //      NSLog(@"Loading done");
-    } else {
-      NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
-      reject(@"no_events", @"There were no events", error);
-//      callback(@[@"Error", @""]);
-      //      NSLog(@"Loading done with Error");
-    }
-  }];
+RCT_EXPORT_METHOD(deleteDocument:(NSString *)key resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos deleteDocumentWithKey: key completionBlock:^(NSString * strData) {
+        if ([strData isEqualToString: Constants.SUCCESS]) {
+            resolve(strData);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, strData, error);
+        }
+    }];
 }
 
 

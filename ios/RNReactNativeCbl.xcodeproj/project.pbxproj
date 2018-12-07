@@ -11,6 +11,7 @@
 		090D1F3621B9573F000A7602 /* CouchbaseEPos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3221B9573E000A7602 /* CouchbaseEPos.swift */; };
 		090D1F3721B9573F000A7602 /* BridgeEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3321B9573E000A7602 /* BridgeEmitter.m */; };
 		090D1F3821B9573F000A7602 /* EmitterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3421B9573F000A7602 /* EmitterManager.m */; };
+		090D215121BA676D000A7602 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090D215021BA676D000A7602 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +150,7 @@
 		090D1F3221B9573E000A7602 /* CouchbaseEPos.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CouchbaseEPos.swift; sourceTree = "<group>"; };
 		090D1F3321B9573E000A7602 /* BridgeEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BridgeEmitter.m; sourceTree = "<group>"; };
 		090D1F3421B9573F000A7602 /* EmitterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmitterManager.m; sourceTree = "<group>"; };
+		090D215021BA676D000A7602 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		134814201AA4EA6300B7C361 /* libRNReactNativeCbl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNReactNativeCbl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1728A66207A625D00838B93 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -183,6 +185,7 @@
 				090D1F3121B9573E000A7602 /* EmitterManager.h */,
 				090D1F3421B9573F000A7602 /* EmitterManager.m */,
 				090D1F2C21B9573C000A7602 /* RNReactNativeCbl-Bridging-Header.h */,
+				090D215021BA676D000A7602 /* Constants.swift */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				D1728A66207A625D00838B93 /* React.xcodeproj */,
 			);
@@ -392,6 +395,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				090D215121BA676D000A7602 /* Constants.swift in Sources */,
 				090D1F3821B9573F000A7602 /* EmitterManager.m in Sources */,
 				090D1F3621B9573F000A7602 /* CouchbaseEPos.swift in Sources */,
 				090D1F3721B9573F000A7602 /* BridgeEmitter.m in Sources */,

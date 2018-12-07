@@ -10,57 +10,71 @@ import Foundation
 import CouchbaseLiteSwift
 
 @objc class CouchbaseEPos: NSObject {
-  
-  var database: Database!
-  
-  @objc func saveData(key: String, data: String) -> Void {
-//    NSLog("%@ %@", key, data);
     
-    do {
-      database = try Database(name: "ePos")
-    } catch {
-      fatalError("Error opening database")
+    var database: Database!
+    
+    @objc func saveDocument(key: String, doc: String, completionBlock:((String)->())) -> Void {
+        do {
+            database = try Database(name: Constants.DB_NAME)
+        } catch {
+            completionBlock(Constants.ERROR)
+            fatalError("Error opening database")
+        }
+        
+        let docId = key + "||" + "abc123" //Application Id
+        let doc = MutableDocument(id: docId)
+        doc.setValue(doc, forKey: key)
+        
+        do {
+            try database.saveDocument(doc)
+            completionBlock(Constants.SUCCESS)
+        } catch {
+            completionBlock(Constants.ERROR)
+            fatalError("Error saving document")
+        }
     }
     
-    let docId = key + "||" + "abc123" //Application Id
-//    print("docId is :: \(docId)")
-    let doc = MutableDocument(id: docId)
-    doc.setValue(data, forKey: key)
-    
-    // Save it to the database.
-    do {
-      try database.saveDocument(doc)
-    } catch {
-      fatalError("Error saving document")
-    }
-  }
-  
-  @objc func getDataWithPromisses(key: String, completionBlock:((String)->())?) {
-    do {
-      database = try Database(name: "ePos")
-    } catch {
-      fatalError("Error opening database")
+    @objc func getDocument(key: String, completionBlock:((String)->())) {
+        do {
+            database = try Database(name: Constants.DB_NAME)
+        } catch {
+            completionBlock(Constants.ERROR)
+            fatalError("Error opening database")
+        }
+        
+        let docId = key + "||" + "abc123" //Application Id
+        let list = database.document(withID: docId)?.toMutable().string(forKey: key)
+        
+        if let docList = list {
+            completionBlock(docList)
+        } else {
+            completionBlock(Constants.ERROR)
+        }
     }
     
-    let docId = key + "||" + "abc123" //Application Id
-    let list = database.document(withID: docId)?.toMutable().string(forKey: key)
-    
-    if let docList = list {
-      if (completionBlock != nil) {
-        completionBlock!(docList)
-      }
-    } else {
-      if (completionBlock != nil) {
-        completionBlock!("Error")
-      }
+    @objc func deleteDocument(key: String, completionBlock:((String)->())) {
+        do {
+            database = try Database(name: Constants.DB_NAME)
+        } catch {
+            completionBlock(Constants.ERROR)
+            fatalError("Error opening database")
+        }
+        
+        let docId = key + "||" + "abc123" //Application Id
+        let docToDel = database.document(withID: docId)!
+        do {
+            try database.deleteDocument(docToDel)
+            completionBlock(Constants.SUCCESS)
+        } catch let error as NSError {
+            completionBlock(error.localizedDescription)
+        }
     }
-  }
-  
-  @objc func sendDataToJSDummyFunc() {
-    let dict: [String: String] = ["Name": "Sourab"]
     
-    let emitterManager: EmitterManager = EmitterManager()
-    emitterManager.initiateEmitter(withEventDict: dict )
-  }
-  
+    @objc func sendDataToJSDummyFunc() {
+        let dict: [String: String] = ["Name": "Sourab"]
+        
+        let emitterManager: EmitterManager = EmitterManager()
+        emitterManager.initiateEmitter(withEventDict: dict )
+    }
+    
 }
