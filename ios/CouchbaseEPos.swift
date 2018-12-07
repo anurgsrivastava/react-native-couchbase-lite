@@ -22,11 +22,11 @@ import CouchbaseLiteSwift
         }
         
         let docId = key + "||" + "abc123" //Application Id
-        let doc = MutableDocument(id: docId)
-        doc.setValue(doc, forKey: key)
+        let mutableDoc = MutableDocument(id: docId)
+        mutableDoc.setValue(doc, forKey: key)
         
         do {
-            try database.saveDocument(doc)
+            try database.saveDocument(mutableDoc)
             completionBlock(Constants.SUCCESS)
         } catch {
             completionBlock(Constants.ERROR)
