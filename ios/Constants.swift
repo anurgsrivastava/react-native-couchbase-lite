@@ -1,9 +1,9 @@
 //
 //  Constants.swift
-//  Todo
+//  Workbench
 //
-//  Created by Pasin Suriyentrakorn on 8/7/17.
-//  Copyright © 2017 Couchbase. All rights reserved.
+//  Created by Sourab Roy on 7/12/18.
+//  Copyright © 2018 Facebook. All rights reserved.
 //
 
 import Foundation
