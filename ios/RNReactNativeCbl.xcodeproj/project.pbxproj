@@ -11,10 +11,6 @@
 		090D1F3621B9573F000A7602 /* CouchbaseEPos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3221B9573E000A7602 /* CouchbaseEPos.swift */; };
 		090D1F3721B9573F000A7602 /* BridgeEmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3321B9573E000A7602 /* BridgeEmitter.m */; };
 		090D1F3821B9573F000A7602 /* EmitterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 090D1F3421B9573F000A7602 /* EmitterManager.m */; };
-		B3E7B58A1CC2AC0600A0062D /* RNReactNativeCbl.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNReactNativeCbl.m */; };
-		D1728B882081F49200838B93 /* RNReactNativeCblImage.m in Sources */ = {isa = PBXBuildFile; fileRef = D1728B762081F49200838B93 /* RNReactNativeCblImage.m */; };
-		D1728B8C2081F95700838B93 /* RNReactNativeCblImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D1728B8B2081F95700838B93 /* RNReactNativeCblImageManager.m */; };
-		D194A72B20FDBB67006BF098 /* RNReactNativeQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = D194A72A20FDBB67006BF098 /* RNReactNativeQuery.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,15 +150,7 @@
 		090D1F3321B9573E000A7602 /* BridgeEmitter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BridgeEmitter.m; sourceTree = "<group>"; };
 		090D1F3421B9573F000A7602 /* EmitterManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmitterManager.m; sourceTree = "<group>"; };
 		134814201AA4EA6300B7C361 /* libRNReactNativeCbl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNReactNativeCbl.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E7B5881CC2AC0600A0062D /* RNReactNativeCbl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNReactNativeCbl.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* RNReactNativeCbl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNReactNativeCbl.m; sourceTree = "<group>"; };
 		D1728A66207A625D00838B93 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		D1728B762081F49200838B93 /* RNReactNativeCblImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNReactNativeCblImage.m; sourceTree = "<group>"; };
-		D1728B872081F49200838B93 /* RNReactNativeCblImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNReactNativeCblImage.h; sourceTree = "<group>"; };
-		D1728B8A2081F95700838B93 /* RNReactNativeCblImageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNReactNativeCblImageManager.h; sourceTree = "<group>"; };
-		D1728B8B2081F95700838B93 /* RNReactNativeCblImageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNReactNativeCblImageManager.m; sourceTree = "<group>"; };
-		D194A72920FDBB66006BF098 /* RNReactNativeQuery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNReactNativeQuery.h; sourceTree = "<group>"; };
-		D194A72A20FDBB67006BF098 /* RNReactNativeQuery.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNReactNativeQuery.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,14 +175,6 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				D194A72920FDBB66006BF098 /* RNReactNativeQuery.h */,
-				D194A72A20FDBB67006BF098 /* RNReactNativeQuery.m */,
-				B3E7B5881CC2AC0600A0062D /* RNReactNativeCbl.h */,
-				B3E7B5891CC2AC0600A0062D /* RNReactNativeCbl.m */,
-				D1728B872081F49200838B93 /* RNReactNativeCblImage.h */,
-				D1728B762081F49200838B93 /* RNReactNativeCblImage.m */,
-				D1728B8A2081F95700838B93 /* RNReactNativeCblImageManager.h */,
-				D1728B8B2081F95700838B93 /* RNReactNativeCblImageManager.m */,
 				090D1F2E21B9573D000A7602 /* BridgeEmitter.h */,
 				090D1F3321B9573E000A7602 /* BridgeEmitter.m */,
 				090D1F3221B9573E000A7602 /* CouchbaseEPos.swift */,
@@ -414,10 +394,6 @@
 			files = (
 				090D1F3821B9573F000A7602 /* EmitterManager.m in Sources */,
 				090D1F3621B9573F000A7602 /* CouchbaseEPos.swift in Sources */,
-				D1728B882081F49200838B93 /* RNReactNativeCblImage.m in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* RNReactNativeCbl.m in Sources */,
-				D1728B8C2081F95700838B93 /* RNReactNativeCblImageManager.m in Sources */,
-				D194A72B20FDBB67006BF098 /* RNReactNativeQuery.m in Sources */,
 				090D1F3721B9573F000A7602 /* BridgeEmitter.m in Sources */,
 				090D1F3521B9573F000A7602 /* CouchbaseEPosBridge.m in Sources */,
 			);
