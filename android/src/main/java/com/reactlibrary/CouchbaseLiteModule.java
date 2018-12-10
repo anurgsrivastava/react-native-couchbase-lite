@@ -93,17 +93,17 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
     if (doc == null) {
       promise.reject("get_document", "Can not find document");
     } else {
-      promise.resolve( ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
+      promise.resolve(doc.getString(docId));
     }
   }
 
   @ReactMethod
-  public void saveDocument(ReadableMap properties, Promise promise) {
-    MutableDocument doc = new MutableDocument();
-    doc.setData( properties.toHashMap() );
+  public void saveDocument(String key, String data, Promise promise) {
+    MutableDocument doc = new MutableDocument(key);
+    doc.setString(key, data);
     try {
       this.db.save(doc);
-      promise.resolve(doc.getId());
+      promise.resolve(true);
     } catch (CouchbaseLiteException e) {
       promise.reject("create_document", "Can not create document", e);
     }
