@@ -13,14 +13,17 @@ import CouchbaseLiteSwift
     
     var database: Database!
     
-    @objc func saveDocument(key: String, doc: String, completionBlock:((String)->())) -> Void {
+    @objc func openDb(name: String, completionBlock:((String)->())) {
         do {
-            database = try Database(name: Constants.DB_NAME)
+            database = try Database(name: name)
+            completionBlock(Constants.SUCCESS)
         } catch {
             completionBlock(Constants.ERROR)
             fatalError("Error opening database")
         }
-        
+    }
+    
+    @objc func saveDocument(key: String, doc: String, completionBlock:((String)->())) -> Void {
         let docId = key + "||" + "abc123" //Application Id
         let mutableDoc = MutableDocument(id: docId)
         mutableDoc.setValue(doc, forKey: key)
@@ -35,13 +38,6 @@ import CouchbaseLiteSwift
     }
     
     @objc func getDocument(key: String, completionBlock:((String)->())) {
-        do {
-            database = try Database(name: Constants.DB_NAME)
-        } catch {
-            completionBlock(Constants.ERROR)
-            fatalError("Error opening database")
-        }
-        
         let docId = key + "||" + "abc123" //Application Id
         let list = database.document(withID: docId)?.toMutable().string(forKey: key)
         
@@ -53,13 +49,6 @@ import CouchbaseLiteSwift
     }
     
     @objc func deleteDocument(key: String, completionBlock:((String)->())) {
-        do {
-            database = try Database(name: Constants.DB_NAME)
-        } catch {
-            completionBlock(Constants.ERROR)
-            fatalError("Error opening database")
-        }
-        
         let docId = key + "||" + "abc123" //Application Id
         let docToDel = database.document(withID: docId)!
         do {
@@ -71,10 +60,9 @@ import CouchbaseLiteSwift
     }
     
     @objc func sendDataToJSDummyFunc() {
-        let dict: [String: String] = ["Name": "Sourab"]
+        let dict: [String: String] = ["Name": "ePos"]
         
         let emitterManager: EmitterManager = EmitterManager()
         emitterManager.initiateEmitter(withEventDict: dict )
     }
-    
 }
