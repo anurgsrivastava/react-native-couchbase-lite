@@ -12,7 +12,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.bridge.JavaScriptModule;
 
-public class RNReactNativeCblPackage implements ReactPackage {
+public class CouchbaseLitePackage implements ReactPackage {
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
     return Collections.emptyList();
@@ -22,7 +22,7 @@ public class RNReactNativeCblPackage implements ReactPackage {
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
 
-    modules.add(new RNReactNativeCblModule(reactContext));
+    modules.add(new CouchbaseLiteModule(reactContext));
 
     return modules;
   }

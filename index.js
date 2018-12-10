@@ -1,5 +1,3 @@
-import CouchbaseLite from './react-native-couchbase-lite'
+import CouchbaseLiteStorage from './CouchbaseLiteStorage'
 
-export default CouchbaseLite
-export * from './cbl-provider-decorator'
-export * from './cbl-connector'
+export default CouchbaseLiteStorage
