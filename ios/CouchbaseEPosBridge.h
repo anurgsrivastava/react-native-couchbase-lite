@@ -9,13 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
 
-@class CouchbaseEPos;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CouchbaseEPosBridge : NSObject <RCTBridgeModule>
-
-@property(nonatomic, strong) CouchbaseEPos *objCouchbaseEpos;
 
 @end
 

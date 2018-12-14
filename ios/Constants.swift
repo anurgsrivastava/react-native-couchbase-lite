@@ -8,9 +8,10 @@
 
 import Foundation
 
-// Constants strings
 @objcMembers
 public class Constants: NSObject {
+    public static let END_POINT_URL = "ws://localhost:4984/prudb"
+    public static let AGENT_ID_WITH_SEP = "agent123::"
     public static let ERROR = "error"
     public static let SUCCESS = "success"
     public static let DB_NAME = "ePos"

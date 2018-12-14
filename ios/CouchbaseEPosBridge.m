@@ -16,7 +16,7 @@ RCT_EXPORT_METHOD(openDb:(nonnull NSString*)name resolver:(RCTPromiseResolveBloc
     if (!_objCouchbaseEpos) {
         _objCouchbaseEpos = [[CouchbaseEPos alloc] init];
     }
-    
+
     [_objCouchbaseEpos openDbWithName: name completionBlock:^(NSString * strStatus) {
         if ([strStatus isEqualToString:Constants.SUCCESS]) {
             resolve(strStatus);
@@ -63,6 +63,20 @@ RCT_EXPORT_METHOD(deleteDocument:(NSString *)key
         } else {
             NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
             reject(Constants.ERROR, strData, error);
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(pushReplicator:(NSString *)sessionKey
+                  Resolver:(RCTPromiseResolveBlock)resolve
+                  Rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos pushReplicatorWithCompletionBlock:^(NSString * strDoc) {
+        if ([strDoc isEqualToString:Constants.SUCCESS]) {
+            resolve(strDoc);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, @"", error);
         }
     }];
 }
