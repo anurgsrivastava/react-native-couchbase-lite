@@ -72,7 +72,7 @@ public class SyncGatewayConfig {
                     .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH));
             pullReplicator =  new Replicator(replicatorConfiguration
                     .setAuthenticator(new SessionAuthenticator(readableMap.getString("replicationSessionKey")))
-                    .setChannels(channels)
+                    .setChannels(channels)  
                     .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL));
         }
         return "PUSH".equalsIgnoreCase(readableMap.getString("replicationType"))?pushReplicator:pullReplicator;
