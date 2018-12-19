@@ -2,6 +2,7 @@
 package com.reactlibrary;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Database;
@@ -17,6 +18,7 @@ import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.QueryChange;
 import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
@@ -30,6 +32,8 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.Callback;
+import com.couchbase.lite.ReplicatorChangeListener;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.facebook.react.bridge.WritableMap;
@@ -47,12 +51,14 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
 
+
 import javax.annotation.Nullable;
 
 public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
 
   private final ReactContext mReactContext;
   private Database db = null;
+  private Database database;
   private final HashMap<String, Document> liveDocuments = new HashMap<>();
   private final HashMap<String, Query> liveQueries = new HashMap<>();
 
@@ -64,6 +70,8 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   public CouchbaseLiteModule(ReactApplicationContext reactContext) {
     super(reactContext);
     mReactContext = reactContext;
+    DatabaseManager.getSharedInstance(reactContext);
+    this.database = DatabaseManager.getDatabase();
   }
 
   private void sendEvent(String eventName, @Nullable WritableMap params) {
@@ -118,6 +126,38 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
     } catch (CouchbaseLiteException e) {
       promise.reject("delete_document", "Can not delete document", e);
     }
+  }
+
+    /**
+     * This method will do data sync up/down based upon the sync type provided in readableMap.
+
+     * @param readableMap holds the channel,session key,replication type.
+     * @param promise
+     */
+  @ReactMethod
+  public void dataSync(ReadableMap readableMap, final Promise promise) {
+
+      /**Replicator instance */
+      final Replicator replicator = SyncGatewayConfig.getReplicator(readableMap);
+
+      /** keeps track of completed/total documents syncing
+       * completed will tell how many documents are synced at the moment
+       * total will represent the total count of document to be synced*/
+      replicator.addChangeListener(new ReplicatorChangeListener() {
+          @Override
+          public void changed(ReplicatorChange change) {
+              if (change.getStatus().getError() != null)
+                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
+              else {
+                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
+                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+              }
+              /**starting syncing in the background*/
+              replicator.start();
+              promise.resolve("true");
+          }
+      });
+
   }
 
   private Map<String, Object> serializeDocument(Document document) {
