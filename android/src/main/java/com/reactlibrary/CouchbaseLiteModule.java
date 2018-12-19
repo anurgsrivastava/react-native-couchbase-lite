@@ -72,8 +72,8 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   public CouchbaseLiteModule(ReactApplicationContext reactContext) {
     super(reactContext);
     mReactContext = reactContext;
-    DatabaseManager.getSharedInstance(reactContext);
-    this.database = DatabaseManager.getDatabase();
+    // DatabaseManager.getSharedInstance(reactContext);
+    // this.database = DatabaseManager.getDatabase();
   }
 
   private void sendEvent(String eventName, @Nullable WritableMap params) {

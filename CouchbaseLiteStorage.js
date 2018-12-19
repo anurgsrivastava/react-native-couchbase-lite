@@ -1,7 +1,7 @@
 'use strict';
 
 import { NativeModules } from "react-native";
-const CBLiteStorage = NativeModules.CBLiteStorage;
+const CBLiteStorage = NativeModules.CouchbaseLiteStorage;
 
 const CouchbaseLiteStorage = {
   getItem(
