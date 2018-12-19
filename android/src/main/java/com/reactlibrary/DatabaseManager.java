@@ -1,0 +1,61 @@
+package com.reactlibrary;
+
+import android.content.Context;
+
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseConfiguration;
+
+/**
+ * The class represent the database configuration responsibe for allocating database
+ * connection object
+ *
+ */
+public class DatabaseManager {
+
+    //need to be loaded from properties.
+    /** name of the database in CBLite. */
+    private static String DB_NAME = "prudential";
+
+    /** Database connection object */
+    private static Database database;
+
+    private static DatabaseManager instance = null;
+
+    private DatabaseManager(Context context) {
+
+        DatabaseConfiguration configuration = new DatabaseConfiguration(context);
+        try {
+            database = new Database(DB_NAME, configuration);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Initialized a new DatabaseManager instance only once with a Database instance.
+     * @param context
+     * @return
+     */
+    public static DatabaseManager getSharedInstance(Context context) {
+        if (instance == null) {
+            instance = new DatabaseManager(context);
+        }
+        return instance;
+    }
+
+    /**
+     * Returns the same instance of Database for subsequent invocation.
+     * @return Database connection instance
+     */
+    public static Database getDatabase() {
+        if (instance == null) {
+            try {
+                throw new Exception("Must call getSharedInstance first");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return database;
+    }
+}

@@ -8,12 +8,29 @@
 #import "CouchbaseEPosBridge.h"
 #import "RNReactNativeCbl-Swift.h"
 
-
 @implementation CouchbaseEPosBridge
 
-RCT_EXPORT_MODULE(CouchbaseEPosBridge);
+RCT_EXPORT_MODULE(CBLiteStorage);
 
-RCT_EXPORT_METHOD(saveDocument:(NSString *)key document:(NSString *)doc resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(openDb:(nonnull NSString*)name resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
+//    if (!_objCouchbaseEpos) {
+//        _objCouchbaseEpos = [[CouchbaseEPos alloc] init];
+//    }
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos openDbWithName: name completionBlock:^(NSString * strStatus) {
+        if ([strStatus isEqualToString:Constants.SUCCESS]) {
+            resolve(strStatus);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, Constants.ERROR_IN_CREATING_DB, error);
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(saveDocument:(NSString *)key
+                  document:(NSString *)doc
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
     [objCouchbaseEPos saveDocumentWithKey: key doc:doc completionBlock:^(NSString * strDoc) {
         if ([strDoc isEqualToString:Constants.SUCCESS]) {
@@ -25,7 +42,8 @@ RCT_EXPORT_METHOD(saveDocument:(NSString *)key document:(NSString *)doc resolver
     }];
 }
 
-RCT_EXPORT_METHOD(getDocument:(NSString *)key resolver:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(getDocument:(NSString *)key
+                  resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
     [objCouchbaseEPos getDocumentWithKey: key completionBlock:^(NSString * strData) {
@@ -38,7 +56,9 @@ RCT_EXPORT_METHOD(getDocument:(NSString *)key resolver:(RCTPromiseResolveBlock)r
     }];
 }
 
-RCT_EXPORT_METHOD(deleteDocument:(NSString *)key resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
+RCT_EXPORT_METHOD(deleteDocument:(NSString *)key
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
     CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
     [objCouchbaseEPos deleteDocumentWithKey: key completionBlock:^(NSString * strData) {
         if ([strData isEqualToString: Constants.SUCCESS]) {
@@ -50,5 +70,18 @@ RCT_EXPORT_METHOD(deleteDocument:(NSString *)key resolver:(RCTPromiseResolveBloc
     }];
 }
 
+RCT_EXPORT_METHOD(pushReplicator:(NSString *)sessionKey
+                  Resolver:(RCTPromiseResolveBlock)resolve
+                  Rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos pushReplicatorWithCompletionBlock:^(NSString * strDoc) {
+        if ([strDoc isEqualToString:Constants.SUCCESS]) {
+            resolve(strDoc);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, @"", error);
+        }
+    }];
+}
 
 @end
