@@ -19,6 +19,8 @@ import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.Result;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.DataSource;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
@@ -93,16 +95,53 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
     if (doc == null) {
       promise.reject("get_document", "Can not find document");
     } else {
-      promise.resolve(doc.getString(docId));
+      promise.resolve(ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
     }
   }
 
   @ReactMethod
-  public void saveDocument(String key, String data, Promise promise) {
-    MutableDocument doc = new MutableDocument(key);
-    doc.setString(key, data);
+  public void multiGet(String type, Promise promise) {
+    Query query = QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(this.db))
+      .where(Expression.property("_type").equalTo(Expression.string(type)));
+
+    try {
+        ResultSet rs = query.execute();
+        promise.resolve( ConversionUtil
+                          .toWritableArray( this.getQueryResults(rs).toArray() ) 
+                       );
+    } catch (CouchbaseLiteException e) {
+        promise.reject("query", "Error running query", e);
+    }
+  }
+
+  @ReactMethod
+  public void saveDocument(String key, ReadableMap data, Promise promise) {
+    MutableDocument doc = new MutableDocument();
+    doc.setData( data.toHashMap() );
     try {
       this.db.save(doc);
+      promise.resolve(true);
+    } catch (CouchbaseLiteException e) {
+      promise.reject("create_document", "Can not create document", e);
+    }
+  }
+
+  @ReactMethod
+  public void multiSet(String key, ReadableArray dataArray, Promise promise) {
+    List<Object> list = dataArray.toArrayList();
+    try {
+      for (Object data : list) {
+        Map <String, String> map = (HashMap)data;
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            MutableDocument doc = new MutableDocument(entry.getKey());
+            doc.setString(entry.getKey(), entry.getValue());
+            doc.setString("key", entry.getKey());
+            doc.setString("_type", key);
+            this.db.save(doc);
+        }
+      }
       promise.resolve(true);
     } catch (CouchbaseLiteException e) {
       promise.reject("create_document", "Can not create document", e);
@@ -137,6 +176,14 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       }
     }
     return properties;
+  }
+
+  private List getQueryResults(ResultSet result) {
+    List list = new ArrayList<>();
+    for (Result row : result.allResults()) {
+      list.add( row.toList() );
+    }
+    return list;
   }
 
 }

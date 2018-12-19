@@ -19,9 +19,15 @@ const CouchbaseLiteStorage = {
                 })
   },
 
+  multiGet(
+    key: string
+  ): Promise { 
+        return CBLiteStorage.multiGet(key);
+  },
+
   setItem(
     key: string,
-    value: string,
+    value: any,
     callback?: ?(error: ?Error) => void
   ): Promise {
         return CBLiteStorage.saveDocument(key, value)
@@ -30,6 +36,13 @@ const CouchbaseLiteStorage = {
                     callback && callback(error)
                     if (!callback) throw error
                 })
+  },
+
+  multiSet(
+    key: string,
+    value: Array<any>,
+  ): Promise { 
+        return CBLiteStorage.multiSet(key, value);
   },
 
   removeItem(
