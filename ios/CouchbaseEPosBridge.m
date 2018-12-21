@@ -10,12 +10,12 @@
 
 @implementation CouchbaseEPosBridge
 
-RCT_EXPORT_MODULE(CBLiteStorage);
+RCT_EXPORT_MODULE(CouchbaseLiteStorage); // CBLiteStorage
 
 RCT_EXPORT_METHOD(openDb:(nonnull NSString*)name resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject) {
-//    if (!_objCouchbaseEpos) {
-//        _objCouchbaseEpos = [[CouchbaseEPos alloc] init];
-//    }
+    //    if (!_objCouchbaseEpos) {
+    //        _objCouchbaseEpos = [[CouchbaseEPos alloc] init];
+    //    }
     CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
     [objCouchbaseEPos openDbWithName: name completionBlock:^(NSString * strStatus) {
         if ([strStatus isEqualToString:Constants.SUCCESS]) {
@@ -80,6 +80,36 @@ RCT_EXPORT_METHOD(pushReplicator:(NSString *)sessionKey
         } else {
             NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
             reject(Constants.ERROR, @"", error);
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(multiSet:(NSString *)key value:(NSArray *)value
+                  Resolver:(RCTPromiseResolveBlock)resolve
+                  Rejecter:(RCTPromiseRejectBlock)reject) {
+    
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos multiSetWithKey: key value:value completionBlock:^(NSString * strDoc) {
+        if ([strDoc isEqualToString:Constants.SUCCESS]) {
+            resolve(strDoc);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, Constants.ERROR_IN_SAVING, error);
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(multiGet:(NSString *)type
+                  Resolver:(RCTPromiseResolveBlock)resolve
+                  Rejecter:(RCTPromiseRejectBlock)reject) {
+    
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos multiGetWithType: type completionBlock:^(NSArray* arrData) {
+        if (arrData.count > 0) {
+            resolve(arrData);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, Constants.ERROR_IN_SAVING, error);
         }
     }];
 }
