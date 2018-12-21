@@ -59,10 +59,8 @@ import javax.annotation.Nullable;
 public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
 
   private final ReactContext mReactContext;
-  private Database db = null;
   private Database database;
-  private final HashMap<String, Document> liveDocuments = new HashMap<>();
-  private final HashMap<String, Query> liveQueries = new HashMap<>();
+  private Database localDatabase;
 
   @Override
   public String getName() {
@@ -72,8 +70,9 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   public CouchbaseLiteModule(ReactApplicationContext reactContext) {
     super(reactContext);
     mReactContext = reactContext;
-    // DatabaseManager.getSharedInstance(reactContext);
-    // this.database = DatabaseManager.getDatabase();
+    DatabaseManager.getSharedInstance(reactContext);
+    this.database = DatabaseManager.getDatabase();
+    this.localDatabase = DatabaseManager.getLocalDatabase();
   }
 
   private void sendEvent(String eventName, @Nullable WritableMap params) {
@@ -83,23 +82,18 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void openDb(String name, Promise promise) {
-    if (this.db == null) {
-      try {
-        DatabaseConfiguration config = new DatabaseConfiguration(mReactContext.getApplicationContext());
-        this.db = new Database(name, config);
-        promise.resolve(null);
-      } catch (CouchbaseLiteException e) {
-        promise.reject("open_database", "Can not open database", e);
-      }
+  public void getDocument(String docId, Promise promise) {
+    Document doc = this.database.getDocument(docId);
+    if (doc == null) {
+      promise.reject("get_document", "Can not find document");
     } else {
-      promise.resolve(null);
+      promise.resolve(ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
     }
   }
 
   @ReactMethod
-  public void getDocument(String docId, Promise promise) {
-    Document doc = this.db.getDocument(docId);
+  public void getLocalDocument(String docId, Promise promise) {
+    Document doc = this.database.getDocument(docId);
     if (doc == null) {
       promise.reject("get_document", "Can not find document");
     } else {
@@ -111,7 +105,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   public void multiGet(String type, Promise promise) {
     Query query = QueryBuilder
       .select(SelectResult.all())
-      .from(DataSource.database(this.db))
+      .from(DataSource.database(this.database))
       .where(Expression.property("_type").equalTo(Expression.string(type)));
 
     try {
@@ -129,13 +123,24 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
     MutableDocument doc = new MutableDocument();
     doc.setData( data.toHashMap() );
     try {
-      this.db.save(doc);
+      this.database.save(doc);
       promise.resolve(true);
     } catch (CouchbaseLiteException e) {
       promise.reject("create_document", "Can not create document", e);
     }
   }
 
+  @ReactMethod
+  public void saveLocalDocument(String key, ReadableMap data, Promise promise) {
+    MutableDocument doc = new MutableDocument();
+    doc.setData( data.toHashMap() );
+    try {
+      this.database.save(doc);
+      promise.resolve(true);
+    } catch (CouchbaseLiteException e) {
+      promise.reject("create_document", "Can not create document", e);
+    }
+  }
   @ReactMethod
   public void multiSet(String key, ReadableArray dataArray, Promise promise) {
     List<Object> list = dataArray.toArrayList();
@@ -147,7 +152,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
             doc.setString(entry.getKey(), entry.getValue());
             doc.setString("key", entry.getKey());
             doc.setString("_type", key);
-            this.db.save(doc);
+            this.database.save(doc);
         }
       }
       promise.resolve(true);
@@ -158,9 +163,9 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void removeDocument(String docId, Promise promise) {
-    Document doc = this.db.getDocument(docId);
+    Document doc = this.database.getDocument(docId);
     try {
-      this.db.delete(doc);
+      this.database.delete(doc);
       promise.resolve(null);
     } catch (CouchbaseLiteException e) {
       promise.reject("delete_document", "Can not delete document", e);
@@ -206,7 +211,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       if (entry.getValue() instanceof Blob) {
         Blob blob = (Blob)entry.getValue();
         Map<String, Object> blobProps = new HashMap<>(blob.getProperties());
-        String path = this.db.getPath().concat("Attachments/").concat( blob.digest().substring(5) ).concat(".blob");
+        String path = this.database.getPath().concat("Attachments/").concat( blob.digest().substring(5) ).concat(".blob");
         try {
           blobProps.put("url", new File(path).toURI().toURL().toString());
         } catch (MalformedURLException e) {
