@@ -19,6 +19,21 @@ const CouchbaseLiteStorage = {
                 })
   },
 
+  getLocalDocument(
+    key: string, 
+    callback?: ?(error: ?Error, result: ?string) => void
+  ): Promise {
+      return CBLiteStorage.getLocalDocument(key)
+              .then(data => {
+                  callback && callback(null, data);
+                  return data;
+              })
+              .catch(error => {
+                  callback && callback(error)
+                  if (!callback) throw error
+              })
+  },
+
   multiGet(
     key: string
   ): Promise { 
@@ -31,6 +46,19 @@ const CouchbaseLiteStorage = {
     callback?: ?(error: ?Error) => void
   ): Promise {
         return CBLiteStorage.saveDocument(key, value)
+                .then(() => callback && callback())
+                .catch(error => {
+                    callback && callback(error)
+                    if (!callback) throw error
+                })
+  },
+
+  saveLocalDocument(
+    key: string,
+    value: any,
+    callback?: ?(error: ?Error) => void
+  ): Promise {
+        return CBLiteStorage.saveLocalDocument(key, value)
                 .then(() => callback && callback())
                 .catch(error => {
                     callback && callback(error)
@@ -56,10 +84,6 @@ const CouchbaseLiteStorage = {
                     if (!callback) throw error
                 })
   },
-
-  openDb(name: string): Promise {
-    return CBLiteStorage.openDb(name);
-  }
 
 }
 
