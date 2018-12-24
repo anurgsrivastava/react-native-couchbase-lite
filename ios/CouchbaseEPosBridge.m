@@ -114,4 +114,48 @@ RCT_EXPORT_METHOD(multiGet:(NSString *)type
     }];
 }
 
+RCT_EXPORT_METHOD(getLocalDocument:(NSString *)docId
+                  Resolver:(RCTPromiseResolveBlock)resolve
+                  Rejecter:(RCTPromiseRejectBlock)reject) {
+    
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos getLocalDocumentWithDocId: docId completionBlock:^(NSString* docList) {
+        if (docList.length > 0) {
+            resolve(docList);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, Constants.ERROR_IN_SAVING, error);
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(saveLocalDocument:(NSString *)key
+                  document:(NSString *)doc
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos saveLocalDocumentWithKey: key doc:doc completionBlock:^(NSString * strDoc) {
+        if ([strDoc isEqualToString:Constants.SUCCESS]) {
+            resolve(strDoc);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, Constants.ERROR_IN_SAVING, error);
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(deleteLocalDocument:(NSString *)key
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos deleteLocalDocumentWithKey: key completionBlock:^(NSString * strData) {
+        if ([strData isEqualToString: Constants.SUCCESS]) {
+            resolve(strData);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, strData, error);
+        }
+    }];
+}
+
 @end

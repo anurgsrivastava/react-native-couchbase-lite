@@ -172,4 +172,44 @@ import CouchbaseLiteSwift
         let emitterManager: EmitterManager = EmitterManager()
         emitterManager.initiateEmitter(withEventDict: dict )
     }
+    
+    //MARK: local DB
+    @objc func getLocalDocument(docId: String, completionBlock:((String)->())) {
+        guard let cbLiteLocalDb = DBManager.shared.localDatabase else { return completionBlock(Constants.ERROR) }
+        
+        let list = cbLiteLocalDb.document(withID: docId)?.toMutable().string(forKey: docId)
+        
+        if let docList = list {
+            completionBlock(docList)
+        } else {
+            completionBlock(Constants.ERROR)
+        }
+    }
+    
+    @objc func saveLocalDocument(key: String, doc: String, completionBlock:((String)->())) -> Void {
+        guard let cbLiteLocalDb = DBManager.shared.localDatabase else { return completionBlock(Constants.ERROR) }
+        
+        let mutableDoc = MutableDocument(id: key)
+        mutableDoc.setValue(doc, forKey: key)
+        
+        do {
+            try cbLiteLocalDb.saveDocument(mutableDoc)
+            completionBlock(Constants.SUCCESS)
+        } catch {
+            completionBlock(Constants.ERROR)
+            fatalError("Error saving document")
+        }
+    }
+    
+    @objc func deleteLocalDocument(key: String, completionBlock:((String)->())) {
+        guard let cbLiteLocalDb = DBManager.shared.localDatabase else { return completionBlock(Constants.ERROR) }
+        
+        let docToDel = cbLiteLocalDb.document(withID: key)!
+        do {
+            try cbLiteLocalDb.deleteDocument(docToDel)
+            completionBlock(Constants.SUCCESS)
+        } catch let error as NSError {
+            completionBlock(error.localizedDescription)
+        }
+    }
 }
