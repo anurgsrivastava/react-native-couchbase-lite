@@ -74,7 +74,21 @@ RCT_EXPORT_METHOD(pushReplicator:(NSString *)sessionKey
                   Resolver:(RCTPromiseResolveBlock)resolve
                   Rejecter:(RCTPromiseRejectBlock)reject) {
     CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
-    [objCouchbaseEPos pushReplicatorWithCompletionBlock:^(NSString * strDoc) {
+    [objCouchbaseEPos pushReplicatorWithSessionKey: sessionKey completionBlock:^(NSString * strDoc) {
+        if ([strDoc isEqualToString:Constants.SUCCESS]) {
+            resolve(strDoc);
+        } else {
+            NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];
+            reject(Constants.ERROR, @"", error);
+        }
+    }];
+}
+
+RCT_EXPORT_METHOD(pullReplicator:(NSString *)sessionKey
+                  Resolver:(RCTPromiseResolveBlock)resolve
+                  Rejecter:(RCTPromiseRejectBlock)reject) {
+    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
+    [objCouchbaseEPos pullReplicatorWithSessionKey: sessionKey completionBlock:^(NSString * strDoc) {
         if ([strDoc isEqualToString:Constants.SUCCESS]) {
             resolve(strDoc);
         } else {
@@ -120,7 +134,7 @@ RCT_EXPORT_METHOD(getLocalDocument:(NSString *)docId
     
     CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
     [objCouchbaseEPos getLocalDocumentWithDocId: docId completionBlock:^(NSString* docList) {
-        if (docList.length > 0) {
+        if (![docList isEqualToString: Constants.ERROR]) {
             resolve(docList);
         } else {
             NSError *error = [[NSError alloc] initWithDomain:@"123" code:123 userInfo:nil];

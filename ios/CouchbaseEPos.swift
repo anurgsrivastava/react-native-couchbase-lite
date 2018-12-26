@@ -20,7 +20,6 @@ import CouchbaseLiteSwift
         //            completionBlock(Constants.ERROR)
         //            fatalError("Error opening database")
         //        }
-        
         guard DBManager.shared.database != nil else { return completionBlock(Constants.ERROR) }
         completionBlock(Constants.SUCCESS)
     }
@@ -44,8 +43,8 @@ import CouchbaseLiteSwift
     @objc func getDocument(key: String, completionBlock:((String)->())) {
         guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
         
-        let docId = key + "||" + "abc123" //Application Id
-        let list = cbLiteDb.document(withID: docId)?.toMutable().string(forKey: key)
+        //        let docId = key + "||" + "abc123" //Application Id
+        let list = cbLiteDb.document(withID: key)?.toMutable().string(forKey: key)
         
         if let docList = list {
             completionBlock(docList)
@@ -67,24 +66,59 @@ import CouchbaseLiteSwift
         }
     }
     
-    @objc func pushReplicator(completionBlock:@escaping ((String)->())) {
+    @objc func pushReplicator(sessionKey: String, completionBlock:@escaping ((String)->())) {
         guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
         
         let targetEndpoint = URLEndpoint(url: URL(string: Constants.END_POINT_URL)!)
         let replConfig = ReplicatorConfiguration(database: cbLiteDb, target: targetEndpoint)
         replConfig.replicatorType = .push
         
-        replConfig.authenticator = BasicAuthenticator(username: "sourabRoy", password: "pass")
-        //    replConfig.authenticator = SessionAuthenticator.init(sessionID: "f2918f92357cd89075256eb307b2e81d1db3ba2c")
+        //        replConfig.authenticator = BasicAuthenticator(username: "sourabroy", password: "pass")
+        replConfig.authenticator = SessionAuthenticator.init(sessionID: sessionKey)
         
         let replicator = Replicator(config: replConfig)
         
         replicator.addChangeListener { (change) in
             if let error = change.status.error as NSError? {
-                print("Error code :: \(error.code)")
+                print("Error code for Push :: \(error.code)")
                 completionBlock(error.localizedDescription)
             } else {
-                completionBlock(Constants.SUCCESS)
+                //                completionBlock(Constants.SUCCESS)
+            }
+        }
+        
+        replicator.start()
+    }
+    
+    @objc func pullReplicator(sessionKey: String, completionBlock:@escaping ((String)->())) {
+        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        
+        let targetEndpoint = URLEndpoint(url: URL(string: Constants.END_POINT_URL)!)
+        let replConfig = ReplicatorConfiguration(database: cbLiteDb, target: targetEndpoint)
+        replConfig.replicatorType = .pull
+        
+        //        replConfig.authenticator = BasicAuthenticator(username: "sourabroy", password: "pass")
+        replConfig.authenticator = SessionAuthenticator.init(sessionID: sessionKey)
+        
+        let replicator = Replicator(config: replConfig)
+        
+        replicator.addChangeListener { (change) in
+            if let error = change.status.error as NSError? {
+                print("Error code for Pull :: \(error.code)")
+                completionBlock(error.localizedDescription)
+            } else {
+                switch (change.status.activity) {
+                case .stopped:
+                    completionBlock(Constants.SUCCESS)
+                case .offline:
+                    print("offline")
+                case .connecting:
+                    print("connecting")
+                case .idle:
+                    print("idle")
+                case .busy:
+                    print("busy")
+                }
             }
         }
         
@@ -104,7 +138,7 @@ import CouchbaseLiteSwift
                 mutableDoc = MutableDocument(id: objDict.key as? String)
                 mutableDoc.setString(objDict.value as? String, forKey: objDict.key as! String)
                 mutableDoc.setString((objDict.key as? String)!, forKey:"key")
-                mutableDoc.setString(key, forKey: "_type")
+                mutableDoc.setString(key, forKey: "underType")
                 
                 do {
                     try cbLiteDb.saveDocument(mutableDoc)
@@ -129,7 +163,7 @@ import CouchbaseLiteSwift
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(cbLiteDb))
-            .where(Expression.property("_type").equalTo(Expression.string(type)));
+            .where(Expression.property("underType").equalTo(Expression.string(type)));
         
         do {
             let allDatas: NSMutableArray = []
@@ -138,11 +172,11 @@ import CouchbaseLiteSwift
                     
                     var dict: [String: String] = [:]
                     
-                    // Setting the value of "_type"
-                    if let dataForType = resultDict.string(forKey: "_type") {
-                        dict["_type"] = dataForType
+                    // Setting the value of "underType"
+                    if let dataForType = resultDict.string(forKey: "underType") {
+                        dict["underType"] = dataForType
                     } else {
-                        dict["_type"] = ""
+                        dict["underType"] = ""
                     }
                     // Setting the value of "key"
                     if let dataForKey = resultDict.string(forKey: "key") {
