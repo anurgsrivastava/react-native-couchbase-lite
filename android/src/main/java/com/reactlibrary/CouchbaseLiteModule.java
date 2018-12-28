@@ -106,7 +106,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
     Query query = QueryBuilder
       .select(SelectResult.all())
       .from(DataSource.database(this.database))
-      .where(Expression.property("_type").equalTo(Expression.string(type)));
+      .where(Expression.property("type").equalTo(Expression.string(type)));
 
     try {
         ResultSet rs = query.execute();
@@ -151,7 +151,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
             MutableDocument doc = new MutableDocument(entry.getKey());
             doc.setString(entry.getKey(), entry.getValue());
             doc.setString("key", entry.getKey());
-            doc.setString("_type", key);
+            doc.setString("type", key);
             this.database.save(doc);
         }
       }
@@ -196,12 +196,11 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
                   Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
                   Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
               }
-              /**starting syncing in the background*/
-              replicator.start();
-              promise.resolve("true");
           }
       });
-
+      /**starting syncing in the background*/
+      replicator.start();
+      promise.resolve("true");
   }
 
   private Map<String, Object> serializeDocument(Document document) {

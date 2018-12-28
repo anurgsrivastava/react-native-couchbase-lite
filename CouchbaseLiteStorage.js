@@ -1,43 +1,56 @@
-'use strict';
+"use strict";
 
 import { NativeModules } from "react-native";
 const CBLiteStorage = NativeModules.CouchbaseLiteStorage;
 
 const CouchbaseLiteStorage = {
+  pushItem(
+    key: any,
+    callback?: ?(error: ?Error, result: ?string) => void
+  ): Promise {
+    return CBLiteStorage.dataSync(key)
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
+  },
+
   getItem(
-      key: string, 
-      callback?: ?(error: ?Error, result: ?string) => void
-    ): Promise {
-        return CBLiteStorage.getDocument(key)
-                .then(data => {
-                    callback && callback(null, data);
-                    return data;
-                })
-                .catch(error => {
-                    callback && callback(error)
-                    if (!callback) throw error
-                })
+    key: string,
+    callback?: ?(error: ?Error, result: ?string) => void
+  ): Promise {
+    return CBLiteStorage.getDocument(key)
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
   },
 
   getLocalDocument(
-    key: string, 
+    key: string,
     callback?: ?(error: ?Error, result: ?string) => void
   ): Promise {
-      return CBLiteStorage.getLocalDocument(key)
-              .then(data => {
-                  callback && callback(null, data);
-                  return data;
-              })
-              .catch(error => {
-                  callback && callback(error)
-                  if (!callback) throw error
-              })
+    return CBLiteStorage.getLocalDocument(key)
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
   },
 
-  multiGet(
-    key: string
-  ): Promise { 
-        return CBLiteStorage.multiGet(key);
+  multiGet(key: string): Promise {
+    return CBLiteStorage.multiGet(key);
   },
 
   setItem(
@@ -45,12 +58,12 @@ const CouchbaseLiteStorage = {
     value: any,
     callback?: ?(error: ?Error) => void
   ): Promise {
-        return CBLiteStorage.saveDocument(key, value)
-                .then(() => callback && callback())
-                .catch(error => {
-                    callback && callback(error)
-                    if (!callback) throw error
-                })
+    return CBLiteStorage.saveDocument(key, value)
+      .then(() => callback && callback())
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
   },
 
   saveLocalDocument(
@@ -58,33 +71,26 @@ const CouchbaseLiteStorage = {
     value: any,
     callback?: ?(error: ?Error) => void
   ): Promise {
-        return CBLiteStorage.saveLocalDocument(key, value)
-                .then(() => callback && callback())
-                .catch(error => {
-                    callback && callback(error)
-                    if (!callback) throw error
-                })
+    return CBLiteStorage.saveLocalDocument(key, value)
+      .then(() => callback && callback())
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
   },
 
-  multiSet(
-    key: string,
-    value: Array<any>,
-  ): Promise { 
-        return CBLiteStorage.multiSet(key, value);
+  multiSet(key: string, value: Array<any>): Promise {
+    return CBLiteStorage.multiSet(key, value);
   },
 
-  removeItem(
-    key: string,
-    callback?: ?(error: ?Error) => void
-  ): Promise {
-        return CBLiteStorage.removeDocument(key)
-                .then(() => callback && callback())
-                .catch(error => {
-                    callback && callback(error)
-                    if (!callback) throw error
-                })
-  },
-
-}
+  removeItem(key: string, callback?: ?(error: ?Error) => void): Promise {
+    return CBLiteStorage.removeDocument(key)
+      .then(() => callback && callback())
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
+  }
+};
 
 export default CouchbaseLiteStorage;
