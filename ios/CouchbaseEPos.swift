@@ -43,7 +43,6 @@ import CouchbaseLiteSwift
     @objc func getDocument(key: String, completionBlock:((String)->())) {
         guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
         
-        //        let docId = key + "||" + "abc123" //Application Id
         let list = cbLiteDb.document(withID: key)?.toMutable().string(forKey: key)
         
         if let docList = list {
@@ -73,7 +72,6 @@ import CouchbaseLiteSwift
         let replConfig = ReplicatorConfiguration(database: cbLiteDb, target: targetEndpoint)
         replConfig.replicatorType = .push
         
-        //        replConfig.authenticator = BasicAuthenticator(username: "sourabroy", password: "pass")
         replConfig.authenticator = SessionAuthenticator.init(sessionID: sessionKey)
         
         let replicator = Replicator(config: replConfig)
@@ -83,7 +81,18 @@ import CouchbaseLiteSwift
                 print("Error code for Push :: \(error.code)")
                 completionBlock(error.localizedDescription)
             } else {
-                //                completionBlock(Constants.SUCCESS)
+                switch (change.status.activity) {
+                case .stopped:
+                    completionBlock(Constants.SUCCESS)
+                case .offline:
+                    print("offline")
+                case .connecting:
+                    print("connecting")
+                case .idle:
+                    print("idle")
+                case .busy:
+                    print("busy")
+                }
             }
         }
         
@@ -97,7 +106,6 @@ import CouchbaseLiteSwift
         let replConfig = ReplicatorConfiguration(database: cbLiteDb, target: targetEndpoint)
         replConfig.replicatorType = .pull
         
-        //        replConfig.authenticator = BasicAuthenticator(username: "sourabroy", password: "pass")
         replConfig.authenticator = SessionAuthenticator.init(sessionID: sessionKey)
         
         let replicator = Replicator(config: replConfig)
@@ -138,7 +146,7 @@ import CouchbaseLiteSwift
                 mutableDoc = MutableDocument(id: objDict.key as? String)
                 mutableDoc.setString(objDict.value as? String, forKey: objDict.key as! String)
                 mutableDoc.setString((objDict.key as? String)!, forKey:"key")
-                mutableDoc.setString(key, forKey: "underType")
+                mutableDoc.setString(key, forKey: "docType")
                 
                 do {
                     try cbLiteDb.saveDocument(mutableDoc)
@@ -163,7 +171,7 @@ import CouchbaseLiteSwift
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(cbLiteDb))
-            .where(Expression.property("underType").equalTo(Expression.string(type)));
+            .where(Expression.property("docType").equalTo(Expression.string(type)));
         
         do {
             let allDatas: NSMutableArray = []
@@ -172,11 +180,11 @@ import CouchbaseLiteSwift
                     
                     var dict: [String: String] = [:]
                     
-                    // Setting the value of "underType"
-                    if let dataForType = resultDict.string(forKey: "underType") {
-                        dict["underType"] = dataForType
+                    // Setting the value of "docType"
+                    if let dataForType = resultDict.string(forKey: "docType") {
+                        dict["docType"] = dataForType
                     } else {
-                        dict["underType"] = ""
+                        dict["docType"] = ""
                     }
                     // Setting the value of "key"
                     if let dataForKey = resultDict.string(forKey: "key") {
