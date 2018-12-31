@@ -27,8 +27,7 @@ import CouchbaseLiteSwift
     @objc func saveDocument(key: String, doc: String, completionBlock:((String)->())) -> Void {
         guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
         
-        let docId = key + "||" + "abc123" //Application Id
-        let mutableDoc = MutableDocument(id: docId)
+        let mutableDoc = MutableDocument(id: key)
         mutableDoc.setValue(doc, forKey: key)
         
         do {
