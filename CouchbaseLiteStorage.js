@@ -4,11 +4,27 @@ import { NativeModules } from "react-native";
 const CBLiteStorage = NativeModules.CouchbaseLiteStorage;
 
 const CouchbaseLiteStorage = {
+
   pushItem(
     key: any,
     callback?: ?(error: ?Error, result: ?string) => void
   ): Promise {
-    return CBLiteStorage.dataSync(key)
+    return CBLiteStorage.pushReplicator(key)
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
+  },
+
+  pullItem(
+    key: any,
+    callback?: ?(error: ?Error, result: ?string) => void
+  ): Promise {
+    return CBLiteStorage.pullReplicator(key)
       .then(data => {
         callback && callback(null, data);
         return data;
@@ -90,7 +106,17 @@ const CouchbaseLiteStorage = {
         callback && callback(error);
         if (!callback) throw error;
       });
-  }
+  },
+
+  
+  initialiseDBWithAgentId(key: string, callback?: ?(error: ?Error) => void): Promise {
+    return CBLiteStorage.initialiseDBWithAgentId(key)
+      .then(() => callback && callback())
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
+  },
 };
 
 export default CouchbaseLiteStorage;
