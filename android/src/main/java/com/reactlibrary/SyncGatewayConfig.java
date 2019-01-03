@@ -62,7 +62,7 @@ public class SyncGatewayConfig {
      *                    as well as options to get specific replicator.
      * @return Replicator Instance, either pushReplicator or pullReplicator.
      */
-    public static Replicator getReplicator(ReadableMap readableMap) {
+    public static Replicator getPushReplicator(ReadableMap readableMap) {
         if(syncGatewayConfig == null) {
             syncGatewayConfig = new SyncGatewayConfig();
             List<String> channels = new ArrayList<>();
@@ -70,12 +70,20 @@ public class SyncGatewayConfig {
             pushReplicator = new Replicator(replicatorConfiguration
                     .setAuthenticator(new SessionAuthenticator(readableMap.getString("replicationSessionKey")))
                     .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH));
+        }
+        return pushReplicator;
+    }
+
+    public static Replicator getPullReplicator(ReadableMap readableMap) {
+        if(syncGatewayConfig == null) {
+            syncGatewayConfig = new SyncGatewayConfig();
+            List<String> channels = new ArrayList<>();
+            channels.add(readableMap.getString("channel"));
             pullReplicator =  new Replicator(replicatorConfiguration
                     .setAuthenticator(new SessionAuthenticator(readableMap.getString("replicationSessionKey")))
                     .setChannels(channels)  
                     .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL));
         }
-        return "PUSH".equalsIgnoreCase(readableMap.getString("replicationType"))?pushReplicator:pullReplicator;
-
+        return pullReplicator;
     }
 }
