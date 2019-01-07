@@ -4,7 +4,6 @@ import { NativeModules } from "react-native";
 const CBLiteStorage = NativeModules.CouchbaseLiteStorage;
 
 const CouchbaseLiteStorage = {
-
   pushItem(
     key: any,
     callback?: ?(error: ?Error, result: ?string) => void
@@ -88,7 +87,25 @@ const CouchbaseLiteStorage = {
     callback?: ?(error: ?Error) => void
   ): Promise {
     return CBLiteStorage.saveLocalDocument(key, value)
-      .then(() => callback && callback())
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
+  },
+
+  deleteLocalDocument(
+    key: string,
+    callback?: ?(error: ?Error, result: ?string) => void
+  ): Promise {
+    return CBLiteStorage.deleteLocalDocument(key)
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
       .catch(error => {
         callback && callback(error);
         if (!callback) throw error;
@@ -108,15 +125,18 @@ const CouchbaseLiteStorage = {
       });
   },
 
-  
   initialiseDBWithAgentId(key: string, callback?: ?(error: ?Error) => void): Promise {
     return CBLiteStorage.initialiseDBWithAgentId(key)
-      .then(() => callback && callback())
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
       .catch(error => {
         callback && callback(error);
         if (!callback) throw error;
       });
   },
+
 };
 
 export default CouchbaseLiteStorage;
