@@ -11,27 +11,35 @@ import CouchbaseLiteSwift
 
 @objc class CouchbaseEPos: NSObject {
     
-    //REMOVE openDb
+    var database: Database!
+    
+    //MARK: openDb
     @objc func openDb(name: String, completionBlock:((String)->())) {
-        //        do {
-        //            database = try Database(name: name)
-        //            completionBlock(Constants.SUCCESS)
-        //        } catch {
-        //            completionBlock(Constants.ERROR)
-        //            fatalError("Error opening database")
-        //        }
-        guard DBManager.shared.database != nil else { return completionBlock(Constants.ERROR) }
         completionBlock(Constants.SUCCESS)
     }
     
+    //MARK: InitialiseDb
+    @objc func initialiseDBWithAgentId(dbName: String, completionBlock:((String)->())) {
+        do {
+            database = try Database(name: dbName)
+            completionBlock(Constants.SUCCESS)
+        } catch {
+            completionBlock(Constants.ERROR)
+            fatalError("Error opening database")
+        }
+    }
+    
     @objc func saveDocument(key: String, doc: String, completionBlock:((String)->())) -> Void {
-        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        if !(database != nil) {
+            return completionBlock(Constants.ERROR)
+        }
         
         let mutableDoc = MutableDocument(id: key)
         mutableDoc.setValue(doc, forKey: key)
         
         do {
-            try cbLiteDb.saveDocument(mutableDoc)
+            try database.saveDocument(mutableDoc)
             completionBlock(Constants.SUCCESS)
         } catch {
             completionBlock(Constants.ERROR)
@@ -40,9 +48,12 @@ import CouchbaseLiteSwift
     }
     
     @objc func getDocument(key: String, completionBlock:((String)->())) {
-        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        if !(database != nil) {
+            return completionBlock(Constants.ERROR)
+        }
         
-        let list = cbLiteDb.document(withID: key)?.toMutable().string(forKey: key)
+        let list = database.document(withID: key)?.toMutable().string(forKey: key)
         
         if let docList = list {
             completionBlock(docList)
@@ -52,23 +63,37 @@ import CouchbaseLiteSwift
     }
     
     @objc func deleteDocument(key: String, completionBlock:((String)->())) {
-        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        if !(database != nil) {
+            return completionBlock(Constants.ERROR)
+        }
         
-        let docId = key + "||" + "abc123" //Application Id
-        let docToDel = cbLiteDb.document(withID: docId)!
         do {
-            try cbLiteDb.deleteDocument(docToDel)
-            completionBlock(Constants.SUCCESS)
+            if let docTodl = try database.document(withID: key) {
+                do {
+                    try database.deleteDocument(docTodl)
+                    completionBlock(Constants.SUCCESS)
+                } catch let error as NSError {
+                    completionBlock(error.localizedDescription)
+                }
+            } else {
+                return completionBlock(Constants.SUCCESS)
+            }
         } catch let error as NSError {
             completionBlock(error.localizedDescription)
         }
     }
     
+    //MARK: push and pull replicators
     @objc func pushReplicator(sessionKey: String, completionBlock:@escaping ((String)->())) {
-        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        if !(database != nil) {
+            return completionBlock(Constants.ERROR)
+        }
         
-        let targetEndpoint = URLEndpoint(url: URL(string: Constants.END_POINT_URL)!)
-        let replConfig = ReplicatorConfiguration(database: cbLiteDb, target: targetEndpoint)
+        let endPointUrl = Constants.END_POINT_URL + database.name
+        let targetEndpoint = URLEndpoint(url: URL(string: endPointUrl)!)
+        let replConfig = ReplicatorConfiguration(database: database, target: targetEndpoint)
         replConfig.replicatorType = .push
         
         replConfig.authenticator = SessionAuthenticator.init(sessionID: sessionKey)
@@ -99,10 +124,16 @@ import CouchbaseLiteSwift
     }
     
     @objc func pullReplicator(sessionKey: String, completionBlock:@escaping ((String)->())) {
-        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+        if !(database != nil) {
+            return completionBlock(Constants.SUCCESS)
+            //            return completionBlock(Constants.ERROR)
+        }
         
-        let targetEndpoint = URLEndpoint(url: URL(string: Constants.END_POINT_URL)!)
-        let replConfig = ReplicatorConfiguration(database: cbLiteDb, target: targetEndpoint)
+        let endPointUrl = Constants.END_POINT_URL + database.name
+        
+        let targetEndpoint = URLEndpoint(url: URL(string: endPointUrl)!)
+        let replConfig = ReplicatorConfiguration(database: database, target: targetEndpoint)
         replConfig.replicatorType = .pull
         
         replConfig.authenticator = SessionAuthenticator.init(sessionID: sessionKey)
@@ -132,10 +163,16 @@ import CouchbaseLiteSwift
         replicator.start()
     }
     
+    //MARK: multiSet and multiGet
     @objc func multiSet(key: String, value: NSArray, completionBlock:((String)->())) -> Void {
-        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
-        //        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
-        //        print(paths[0])
+        //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
+//        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+//        print(paths[0])
+        
+        if !(database != nil) {
+            return completionBlock(Constants.SUCCESS)
+            //            return completionBlock(Constants.ERROR)
+        }
         
         var blIsSuccess : Bool = true
         var mutableDoc = MutableDocument();
@@ -148,7 +185,7 @@ import CouchbaseLiteSwift
                 mutableDoc.setString(key, forKey: "docType")
                 
                 do {
-                    try cbLiteDb.saveDocument(mutableDoc)
+                    try database.saveDocument(mutableDoc)
                     blIsSuccess = true
                 } catch {
                     blIsSuccess = false
@@ -165,17 +202,20 @@ import CouchbaseLiteSwift
     }
     
     @objc func multiGet(type: String, completionBlock:(([Any])->())) -> Void {
-        guard let cbLiteDb = DBManager.shared.database else { return completionBlock([Constants.ERROR]) }
+        //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock([Constants.ERROR]) }
+        if !(database != nil) {
+            return completionBlock([Constants.ERROR])
+        }
         
         let query = QueryBuilder
             .select(SelectResult.all())
-            .from(DataSource.database(cbLiteDb))
+            .from(DataSource.database(database))
             .where(Expression.property("docType").equalTo(Expression.string(type)));
         
         do {
             let allDatas: NSMutableArray = []
             for result in try query.execute() {
-                if let resultDict = result.dictionary(forKey: cbLiteDb.name) {
+                if let resultDict = result.dictionary(forKey: database.name) {
                     
                     var dict: [String: String] = [:]
                     
@@ -207,6 +247,7 @@ import CouchbaseLiteSwift
         }
     }
     
+    //MARK: Data flowing native to RN with Emitter
     @objc func sendDataToJSDummyFunc() {
         let dict: [String: String] = ["Name": "ePos"]
         
@@ -235,7 +276,7 @@ import CouchbaseLiteSwift
         
         do {
             try cbLiteLocalDb.saveDocument(mutableDoc)
-            completionBlock(Constants.SUCCESS)
+            completionBlock(doc)
         } catch {
             completionBlock(Constants.ERROR)
             fatalError("Error saving document")
@@ -244,7 +285,7 @@ import CouchbaseLiteSwift
     
     @objc func deleteLocalDocument(key: String, completionBlock:((String)->())) {
         guard let cbLiteLocalDb = DBManager.shared.localDatabase else { return completionBlock(Constants.ERROR) }
-        
+        database = nil
         let docToDel = cbLiteLocalDb.document(withID: key)!
         do {
             try cbLiteLocalDb.deleteDocument(docToDel)
@@ -253,4 +294,5 @@ import CouchbaseLiteSwift
             completionBlock(error.localizedDescription)
         }
     }
+    
 }

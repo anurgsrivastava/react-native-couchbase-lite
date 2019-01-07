@@ -10,7 +10,7 @@ import Foundation
 
 @objcMembers
 public class Constants: NSObject {
-    public static let END_POINT_URL = "ws://localhost:4984/prudb"
+    public static let END_POINT_URL = "ws://localhost:4984/"
     public static let ERROR = "error"
     public static let SUCCESS = "success"
     public static let DB_NAME = "ePos"
