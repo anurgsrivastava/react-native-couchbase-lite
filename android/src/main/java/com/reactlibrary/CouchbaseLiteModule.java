@@ -172,17 +172,39 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
     }
   }
 
-    /**
-     * This method will do data sync up/down based upon the sync type provided in readableMap.
-
-     * @param readableMap holds the channel,session key,replication type.
-     * @param promise
-     */
+   /**
+    * This method will do data sync up/down based upon the sync type provided in readableMap.
+    * @param readableMap holds the channel,session key,replication type.
+    * @param promise
+    */
   @ReactMethod
-  public void dataSync(ReadableMap readableMap, final Promise promise) {
-
+  public void pushReplicator(ReadableMap readableMap, final Promise promise) {
       /**Replicator instance */
-      final Replicator replicator = SyncGatewayConfig.getReplicator(readableMap);
+      final Replicator replicator = SyncGatewayConfig.getPushReplicator(readableMap);
+
+      /** keeps track of completed/total documents syncing
+       * completed will tell how many documents are synced at the moment
+       * total will represent the total count of document to be synced*/
+      replicator.addChangeListener(new ReplicatorChangeListener() {
+          @Override
+          public void changed(ReplicatorChange change) {
+              if (change.getStatus().getError() != null)
+                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
+              else {
+                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
+                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+              }
+          }
+      });
+      /**starting syncing in the background*/
+      replicator.start();
+      promise.resolve("true");
+  }
+
+  @ReactMethod
+  public void pullReplicator(ReadableMap readableMap, final Promise promise) {
+      /**Replicator instance */
+      final Replicator replicator = SyncGatewayConfig.getPullReplicator(readableMap);
 
       /** keeps track of completed/total documents syncing
        * completed will tell how many documents are synced at the moment
