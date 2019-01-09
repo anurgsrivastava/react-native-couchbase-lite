@@ -81,7 +81,7 @@ RCT_EXPORT_METHOD(removeDocument:(NSString *)key
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
     //    CouchbaseEPos *objCouchbaseEPos = [[CouchbaseEPos alloc] init];
-    [_objCouchbaseEpos deleteDocumentWithKey: key completionBlock:^(NSString * strData) {
+    [_objCouchbaseEpos removeDocumentWithKey: key completionBlock:^(NSString * strData) {
         if ([strData isEqualToString: Constants.SUCCESS]) {
             resolve(strData);
         } else {
