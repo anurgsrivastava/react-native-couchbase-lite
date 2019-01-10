@@ -62,14 +62,14 @@ import CouchbaseLiteSwift
         }
     }
     
-    @objc func deleteDocument(key: String, completionBlock:((String)->())) {
+    @objc func removeDocument(key: String, completionBlock:((String)->())) {
         //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
         if !(database != nil) {
             return completionBlock(Constants.ERROR)
         }
         
         do {
-            if let docTodl = try database.document(withID: key) {
+            if let docTodl = database.document(withID: key) {
                 do {
                     try database.deleteDocument(docTodl)
                     completionBlock(Constants.SUCCESS)
@@ -79,8 +79,6 @@ import CouchbaseLiteSwift
             } else {
                 return completionBlock(Constants.SUCCESS)
             }
-        } catch let error as NSError {
-            completionBlock(error.localizedDescription)
         }
     }
     
@@ -91,7 +89,7 @@ import CouchbaseLiteSwift
             return completionBlock(Constants.ERROR)
         }
         
-        let endPointUrl = Constants.END_POINT_URL + database.name
+        let endPointUrl = Constants.END_POINT_URL // + database.name
         let targetEndpoint = URLEndpoint(url: URL(string: endPointUrl)!)
         let replConfig = ReplicatorConfiguration(database: database, target: targetEndpoint)
         replConfig.replicatorType = .push
@@ -130,10 +128,12 @@ import CouchbaseLiteSwift
             //            return completionBlock(Constants.ERROR)
         }
         
-        let endPointUrl = Constants.END_POINT_URL + database.name
+        let endPointUrl = Constants.END_POINT_URL // + database.name
         
         let targetEndpoint = URLEndpoint(url: URL(string: endPointUrl)!)
         let replConfig = ReplicatorConfiguration(database: database, target: targetEndpoint)
+        print("Database Name is :: \(database.name)")
+        replConfig.channels = [database.name]
         replConfig.replicatorType = .pull
         
         replConfig.authenticator = SessionAuthenticator.init(sessionID: sessionKey)
@@ -166,8 +166,8 @@ import CouchbaseLiteSwift
     //MARK: multiSet and multiGet
     @objc func multiSet(key: String, value: NSArray, completionBlock:((String)->())) -> Void {
         //        guard let cbLiteDb = DBManager.shared.database else { return completionBlock(Constants.ERROR) }
-//        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
-//        print(paths[0])
+        //        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+        //        print(paths[0])
         
         if !(database != nil) {
             return completionBlock(Constants.SUCCESS)
@@ -179,10 +179,13 @@ import CouchbaseLiteSwift
         let localAllValues: [NSDictionary] = value as! [NSDictionary]
         for eachValue in localAllValues {
             for objDict in eachValue {
-                mutableDoc = MutableDocument(id: objDict.key as? String)
+                var idUUID: String = objDict.key as! String
+                idUUID = idUUID + "::" + database.name
+                mutableDoc = MutableDocument(id: idUUID)
                 mutableDoc.setString(objDict.value as? String, forKey: objDict.key as! String)
                 mutableDoc.setString((objDict.key as? String)!, forKey:"key")
-                mutableDoc.setString(key, forKey: "docType")
+                mutableDoc.setString(key, forKey: Constants.DOC_TYPE)
+                mutableDoc.setString(database.name, forKey: Constants.CHANNEL_NAME)
                 
                 do {
                     try database.saveDocument(mutableDoc)
@@ -210,7 +213,7 @@ import CouchbaseLiteSwift
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
-            .where(Expression.property("docType").equalTo(Expression.string(type)));
+            .where(Expression.property(Constants.DOC_TYPE).equalTo(Expression.string(type)));
         
         do {
             let allDatas: NSMutableArray = []
@@ -219,11 +222,11 @@ import CouchbaseLiteSwift
                     
                     var dict: [String: String] = [:]
                     
-                    // Setting the value of "docType"
-                    if let dataForType = resultDict.string(forKey: "docType") {
-                        dict["docType"] = dataForType
+                    // Setting the value of DOC_TYPE
+                    if let dataForType = resultDict.string(forKey: Constants.DOC_TYPE) {
+                        dict[Constants.DOC_TYPE] = dataForType
                     } else {
-                        dict["docType"] = ""
+                        dict[Constants.DOC_TYPE] = ""
                     }
                     // Setting the value of "key"
                     if let dataForKey = resultDict.string(forKey: "key") {
@@ -286,13 +289,16 @@ import CouchbaseLiteSwift
     @objc func deleteLocalDocument(key: String, completionBlock:((String)->())) {
         guard let cbLiteLocalDb = DBManager.shared.localDatabase else { return completionBlock(Constants.ERROR) }
         database = nil
-        let docToDel = cbLiteLocalDb.document(withID: key)!
         do {
-            try cbLiteLocalDb.deleteDocument(docToDel)
-            completionBlock(Constants.SUCCESS)
-        } catch let error as NSError {
-            completionBlock(error.localizedDescription)
+            if let docToDel = cbLiteLocalDb.document(withID: key) {
+                
+                do {
+                    try cbLiteLocalDb.deleteDocument(docToDel)
+                    completionBlock(Constants.SUCCESS)
+                } catch let error as NSError {
+                    completionBlock(error.localizedDescription)
+                }
+            }
         }
     }
-    
 }
