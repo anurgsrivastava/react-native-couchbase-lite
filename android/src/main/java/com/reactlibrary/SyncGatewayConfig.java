@@ -46,7 +46,6 @@ public class SyncGatewayConfig {
     }
 
     private ReplicatorConfiguration replicatorConfiguration(){
-
         try {
             return new ReplicatorConfiguration(DatabaseManager.getDatabase(),
                     new URLEndpoint(new URI(SYNC_GATEWAY_URL)));

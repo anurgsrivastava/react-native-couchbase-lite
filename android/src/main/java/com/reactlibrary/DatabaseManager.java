@@ -23,11 +23,25 @@ public class DatabaseManager {
     private static DatabaseManager instance = null;
 
     private DatabaseManager(Context context) {
+        DatabaseConfiguration configuration = new DatabaseConfiguration(context);
+    }
+
+    public static void localDatabaseManager(Context context) {
 
         DatabaseConfiguration configuration = new DatabaseConfiguration(context);
         try {
-            database = new Database(DB_NAME, configuration);
+            //database = new Database(DB_NAME, configuration);
             localDatabase = new Database(LOCAL_DB_NAME, configuration);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void agentDatabaseManager(Context context, String dbName) {
+
+        DatabaseConfiguration configuration = new DatabaseConfiguration(context);
+        try {
+            database = new Database(dbName, configuration);
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
@@ -38,10 +52,19 @@ public class DatabaseManager {
      * @param context
      * @return
      */
-    public static DatabaseManager getSharedInstance(Context context) {
+    public static DatabaseManager getLocalSharedInstance(Context context) {
         if (instance == null) {
             instance = new DatabaseManager(context);
         }
+        localDatabaseManager(context);
+        return instance;
+    }
+
+    public static DatabaseManager getAgentSharedInstance(Context context, String dbName) {
+        if (instance == null) {
+            instance = new DatabaseManager(context);
+        }
+        agentDatabaseManager(context, dbName);
         return instance;
     }
 

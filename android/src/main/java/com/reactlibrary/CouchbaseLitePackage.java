@@ -1,3 +1,9 @@
+/**
+ *  CouchbaseLitePackage.java
+ *  workbench
+ *
+ *  Created by Anurag Srivastava on 06/12/18.
+ */
 
 package com.reactlibrary;
 

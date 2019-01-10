@@ -1,3 +1,9 @@
+/**
+ *  CouchbaseLiteModule.java
+ *  workbench
+ *
+ *  Created by Anurag Srivastava on 06/12/18.
+ */
 
 package com.reactlibrary;
 
@@ -53,7 +59,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
 
-
 import javax.annotation.Nullable;
 
 public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
@@ -61,6 +66,11 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   private final ReactContext mReactContext;
   private Database database;
   private Database localDatabase;
+  //public String dbName; //TODO 
+
+  public Database getDatabase(){
+    return database;
+  }
 
   @Override
   public String getName() {
@@ -70,9 +80,10 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   public CouchbaseLiteModule(ReactApplicationContext reactContext) {
     super(reactContext);
     mReactContext = reactContext;
-    DatabaseManager.getSharedInstance(reactContext);
-    this.database = DatabaseManager.getDatabase();
+    DatabaseManager.getLocalSharedInstance(reactContext);
     this.localDatabase = DatabaseManager.getLocalDatabase();
+    DatabaseManager.getAgentSharedInstance(reactContext, "prudential:local");
+    this.database = DatabaseManager.getDatabase();
   }
 
   private void sendEvent(String eventName, @Nullable WritableMap params) {
@@ -82,7 +93,21 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void initialiseDBWithAgentId(String dbName, Promise promise) {
+    try {
+      DatabaseManager.getAgentSharedInstance(mReactContext, dbName);
+      this.database = DatabaseManager.getDatabase();
+      promise.resolve(null);
+    } catch (Exception e) { //Throwing Problem on CouchbaseLiteException
+      promise.reject("initialize_db_with_agent", "Could not initialize db with agent", e);
+    }
+  }
+
+  @ReactMethod
   public void getDocument(String docId, Promise promise) {
+    if(database == null){
+      promise.reject("get_document", "Database not found");
+    }
     Document doc = this.database.getDocument(docId);
     if (doc == null) {
       promise.reject("get_document", "Can not find document");
@@ -92,21 +117,65 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void getLocalDocument(String docId, Promise promise) {
+  public void saveDocument(String key, ReadableMap data, Promise promise) {
+    if(database == null){
+      promise.reject("save_document", "Database not found");
+    }
+    MutableDocument doc = new MutableDocument();
+    doc.setData( data.toHashMap() );
+    try {
+      this.database.save(doc);
+      promise.resolve(true);
+    } catch (CouchbaseLiteException e) {
+      promise.reject("save_document", "Can not create document", e);
+    }
+  }
+
+  @ReactMethod
+  public void updateDocument(String docId, ReadableMap properties, Promise promise) {
+    if(database == null){
+      promise.reject("update_document", "Database not found");
+    }
     Document doc = this.database.getDocument(docId);
     if (doc == null) {
-      promise.reject("get_document", "Can not find document");
-    } else {
-      promise.resolve(ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
+      promise.reject("update_document", "Can not find document");
+      return;
+    }
+    MutableDocument mutableDoc = doc.toMutable();
+    for (Map.Entry<String, Object> entry : properties.toHashMap().entrySet()) {
+      mutableDoc.setValue(entry.getKey(), entry.getValue());
+    }
+    try {
+      this.database.save( mutableDoc );
+      promise.resolve(null);
+    } catch (CouchbaseLiteException e) {
+      promise.reject("update_document", "Can not update document", e);
+    }
+  }
+
+  @ReactMethod
+  public void removeDocument(String docId, Promise promise) {
+    if(database == null){
+      promise.reject("remove_document", "Database not found");
+    }
+    Document doc = this.database.getDocument(docId);
+    try {
+      this.database.delete(doc);
+      promise.resolve(null);
+    } catch (CouchbaseLiteException e) {
+      promise.reject("remove_document", "Can not delete document", e);
     }
   }
 
   @ReactMethod
   public void multiGet(String type, Promise promise) {
+    if(database == null){
+      promise.reject("multi_get", "Database not found");
+    }
     Query query = QueryBuilder
       .select(SelectResult.all())
       .from(DataSource.database(this.database))
-      .where(Expression.property("type").equalTo(Expression.string(type)));
+      .where(Expression.property("docType").equalTo(Expression.string(type)));
 
     try {
         ResultSet rs = query.execute();
@@ -119,30 +188,10 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void saveDocument(String key, ReadableMap data, Promise promise) {
-    MutableDocument doc = new MutableDocument();
-    doc.setData( data.toHashMap() );
-    try {
-      this.database.save(doc);
-      promise.resolve(true);
-    } catch (CouchbaseLiteException e) {
-      promise.reject("create_document", "Can not create document", e);
-    }
-  }
-
-  @ReactMethod
-  public void saveLocalDocument(String key, ReadableMap data, Promise promise) {
-    MutableDocument doc = new MutableDocument();
-    doc.setData( data.toHashMap() );
-    try {
-      this.database.save(doc);
-      promise.resolve(true);
-    } catch (CouchbaseLiteException e) {
-      promise.reject("create_document", "Can not create document", e);
-    }
-  }
-  @ReactMethod
   public void multiSet(String key, ReadableArray dataArray, Promise promise) {
+    if(database == null){
+      promise.reject("multi_set", "Database not found");
+    }
     List<Object> list = dataArray.toArrayList();
     try {
       for (Object data : list) {
@@ -151,7 +200,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
             MutableDocument doc = new MutableDocument(entry.getKey());
             doc.setString(entry.getKey(), entry.getValue());
             doc.setString("key", entry.getKey());
-            doc.setString("type", key);
+            doc.setString("docType", key);
             this.database.save(doc);
         }
       }
@@ -162,67 +211,36 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void removeDocument(String docId, Promise promise) {
-    Document doc = this.database.getDocument(docId);
-    try {
-      this.database.delete(doc);
-      promise.resolve(null);
-    } catch (CouchbaseLiteException e) {
-      promise.reject("delete_document", "Can not delete document", e);
+  public void getLocalDocument(String docId, Promise promise) {
+    Document doc = this.localDatabase.getDocument(docId);
+    if (doc == null) {
+      promise.reject("get_document", "Can not find document");
+    } else {
+      promise.resolve(ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
     }
   }
 
-   /**
-    * This method will do data sync up/down based upon the sync type provided in readableMap.
-    * @param readableMap holds the channel,session key,replication type.
-    * @param promise
-    */
   @ReactMethod
-  public void pushReplicator(ReadableMap readableMap, final Promise promise) {
-      /**Replicator instance */
-      final Replicator replicator = SyncGatewayConfig.getPushReplicator(readableMap);
-
-      /** keeps track of completed/total documents syncing
-       * completed will tell how many documents are synced at the moment
-       * total will represent the total count of document to be synced*/
-      replicator.addChangeListener(new ReplicatorChangeListener() {
-          @Override
-          public void changed(ReplicatorChange change) {
-              if (change.getStatus().getError() != null)
-                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
-              else {
-                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
-                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
-              }
-          }
-      });
-      /**starting syncing in the background*/
-      replicator.start();
-      promise.resolve("true");
+  public void saveLocalDocument(String key, ReadableMap data, Promise promise) {
+    MutableDocument doc = new MutableDocument();
+    doc.setData( data.toHashMap() );
+    try {
+      this.localDatabase.save(doc);
+      promise.resolve(true);
+    } catch (CouchbaseLiteException e) {
+      promise.reject("create_document", "Can not create document", e);
+    }
   }
 
   @ReactMethod
-  public void pullReplicator(ReadableMap readableMap, final Promise promise) {
-      /**Replicator instance */
-      final Replicator replicator = SyncGatewayConfig.getPullReplicator(readableMap);
-
-      /** keeps track of completed/total documents syncing
-       * completed will tell how many documents are synced at the moment
-       * total will represent the total count of document to be synced*/
-      replicator.addChangeListener(new ReplicatorChangeListener() {
-          @Override
-          public void changed(ReplicatorChange change) {
-              if (change.getStatus().getError() != null)
-                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
-              else {
-                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
-                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
-              }
-          }
-      });
-      /**starting syncing in the background*/
-      replicator.start();
-      promise.resolve("true");
+  public void deleteLocalDocument(String docId, Promise promise) {
+    Document doc = this.localDatabase.getDocument(docId);
+    try {
+      this.localDatabase.delete(doc);
+      promise.resolve(true);
+    } catch (CouchbaseLiteException e) {
+      promise.reject("delete_local_document", "Can not delete local document", e);
+    }
   }
 
   private Map<String, Object> serializeDocument(Document document) {
@@ -252,4 +270,62 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
     return list;
   }
 
+   /**
+    * This method will do data sync up.
+    * @param readableMap holds the channel, session key, replication type.
+    * @param promise
+    */
+  @ReactMethod
+  public void pushReplicator(ReadableMap readableMap, final Promise promise) {
+      /**Replicator instance */
+      final Replicator replicator = SyncGatewayConfig.getPushReplicator(readableMap);
+
+      /** keeps track of completed/total documents syncing
+       * completed will tell how many documents are synced at the moment
+       * total will represent the total count of document to be synced*/
+      replicator.addChangeListener(new ReplicatorChangeListener() {
+          @Override
+          public void changed(ReplicatorChange change) {
+              if (change.getStatus().getError() != null)
+                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
+              else {
+                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
+                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+              }
+          }
+      });
+      /**starting syncing in the background*/
+      replicator.start();
+      promise.resolve("true");
+  }
+
+    /**
+    * This method will do data sync down.
+    * @param readableMap holds the channel, session key, replication type.
+    * @param promise
+    */
+  @ReactMethod
+  public void pullReplicator(ReadableMap readableMap, final Promise promise) {
+      /**Replicator instance */
+      final Replicator replicator = SyncGatewayConfig.getPullReplicator(readableMap);
+
+      /** keeps track of completed/total documents syncing
+       * completed will tell how many documents are synced at the moment
+       * total will represent the total count of document to be synced*/
+      replicator.addChangeListener(new ReplicatorChangeListener() {
+          @Override
+          public void changed(ReplicatorChange change) {
+              if (change.getStatus().getError() != null)
+                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
+              else {
+                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
+                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+              }
+          }
+      });
+      /**starting syncing in the background*/
+      replicator.start();
+      promise.resolve("true");
+  }
 }
+
