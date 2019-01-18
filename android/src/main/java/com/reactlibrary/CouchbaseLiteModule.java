@@ -188,17 +188,19 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       replicator.addChangeListener(new ReplicatorChangeListener() {
           @Override
           public void changed(ReplicatorChange change) {
-              if (change.getStatus().getError() != null)
-                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
-              else {
-                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
-                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
-              }
+            if (change.getStatus().getError() != null) {
+              Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
+              promise.reject("Unable to push data");
+            }
+            else if (change.getStatus().getActivityLevel().toString() == "STOPPED" ) {
+                Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
+                Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+                promise.resolve("true");
+            }
           }
       });
       /**starting syncing in the background*/
       replicator.start();
-      promise.resolve("true");
   }
 
   @ReactMethod
@@ -212,17 +214,21 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       replicator.addChangeListener(new ReplicatorChangeListener() {
           @Override
           public void changed(ReplicatorChange change) {
-              if (change.getStatus().getError() != null)
-                  Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
-              else {
-                  Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
-                  Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
-              }
+            if (change.getStatus().getError() != null) {
+              Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
+              promise.reject("Unable to pull data");
+            }
+            //TODO need to send proper error codes back to react side
+            else if (change.getStatus().getActivityLevel().toString() == "STOPPED" ){
+              Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
+              Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+              promise.resolve("true");
+            }
           }
       });
       /**starting syncing in the background*/
       replicator.start();
-      promise.resolve("true");
+
   }
 
   private Map<String, Object> serializeDocument(Document document) {
