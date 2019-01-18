@@ -24,7 +24,7 @@ public class SyncGatewayConfig {
 
     //This will be taken from properties files
     /** websocket endpoint of sync gateway*/
-    private static final String SYNC_GATEWAY_URL = "ws://10.0.2.2:4984/prudential";
+    private static final String SYNC_GATEWAY_URL = "ws://10.4.10.41:4984/prudential";
 
     /** Sync Gateway Configuration instance */
     private static SyncGatewayConfig syncGatewayConfig = null;
