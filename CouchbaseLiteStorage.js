@@ -101,7 +101,7 @@ const CouchbaseLiteStorage = {
     key: string,
     callback?: ?(error: ?Error, result: ?string) => void
   ): Promise {
-    return CBLiteStorage.deleteLocalDocument(key)
+    return CBLiteStorage.removeLocalDocument(key)
       .then(data => {
         callback && callback(null, data);
         return data;
