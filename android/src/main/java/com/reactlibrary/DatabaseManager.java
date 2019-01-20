@@ -15,7 +15,6 @@ public class DatabaseManager {
 
     //need to be loaded from properties.
     /** name of the database in CBLite. */
-    private static String DB_NAME = "prudential";
     private static String LOCAL_DB_NAME = "prudential:local";
     /** Database connection object */
     private static Database database;
@@ -23,14 +22,17 @@ public class DatabaseManager {
     private static DatabaseManager instance = null;
 
     private DatabaseManager(Context context) {
-
         DatabaseConfiguration configuration = new DatabaseConfiguration(context);
         try {
-            database = new Database(DB_NAME, configuration);
             localDatabase = new Database(LOCAL_DB_NAME, configuration);
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void createDatabase(String dbName, Context context) throws CouchbaseLiteException{
+        DatabaseConfiguration configuration = new DatabaseConfiguration(context);
+        database = new Database(dbName, configuration);
     }
 
     /**
@@ -38,7 +40,7 @@ public class DatabaseManager {
      * @param context
      * @return
      */
-    public static DatabaseManager getSharedInstance(Context context) {
+    public static DatabaseManager setContext(Context context) {
         if (instance == null) {
             instance = new DatabaseManager(context);
         }

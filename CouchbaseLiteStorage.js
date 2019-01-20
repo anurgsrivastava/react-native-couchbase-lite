@@ -125,8 +125,8 @@ const CouchbaseLiteStorage = {
       });
   },
 
-  initialiseDBWithAgentId(key: string, callback?: ?(error: ?Error) => void): Promise {
-    return CBLiteStorage.initialiseDBWithAgentId(key)
+  createDatabase(dbName: string, callback?: ?(error: ?Error) => void): Promise {
+    return CBLiteStorage.createDatabase(dbName)
       .then(data => {
         callback && callback(null, data);
         return data;
