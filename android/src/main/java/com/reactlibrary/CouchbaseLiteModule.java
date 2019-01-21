@@ -36,6 +36,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.Callback;
 import com.couchbase.lite.ReplicatorChangeListener;
+import com.couchbase.lite.ListenerToken;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.facebook.react.bridge.WritableMap;
@@ -185,7 +186,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       /** keeps track of completed/total documents syncing
        * completed will tell how many documents are synced at the moment
        * total will represent the total count of document to be synced*/
-      replicator.addChangeListener(new ReplicatorChangeListener() {
+      ListenerToken token = replicator.addChangeListener(new ReplicatorChangeListener() {
           @Override
           public void changed(ReplicatorChange change) {
             if (change.getStatus().getError() != null) {
@@ -201,6 +202,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       });
       /**starting syncing in the background*/
       replicator.start();
+      replicator.removeChangeListener(token); //TODO: should decide on where to call this
   }
 
   @ReactMethod
