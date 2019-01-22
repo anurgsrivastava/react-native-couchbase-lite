@@ -63,8 +63,10 @@ public class SyncGatewayConfig {
      * @return Replicator Instance, either pushReplicator or pullReplicator.
      */
     public static Replicator getPushReplicator(ReadableMap readableMap) {
-        if(syncGatewayConfig == null) {
-            syncGatewayConfig = new SyncGatewayConfig();
+        if(pushReplicator == null) {
+            if(syncGatewayConfig == null) {
+                syncGatewayConfig = new SyncGatewayConfig();
+            }
             List<String> channels = new ArrayList<>();
             channels.add(readableMap.getString("channel"));
             pushReplicator = new Replicator(replicatorConfiguration
@@ -75,8 +77,10 @@ public class SyncGatewayConfig {
     }
 
     public static Replicator getPullReplicator(ReadableMap readableMap) {
-        if(syncGatewayConfig == null) {
-            syncGatewayConfig = new SyncGatewayConfig();
+        if(pullReplicator == null) {
+            if(syncGatewayConfig == null) {
+                syncGatewayConfig = new SyncGatewayConfig();
+            }
             List<String> channels = new ArrayList<>();
             channels.add(readableMap.getString("channel"));
             pullReplicator =  new Replicator(replicatorConfiguration
