@@ -24,7 +24,7 @@ public class SyncGatewayConfig {
 
     //This will be taken from properties files
     /** websocket endpoint of sync gateway*/
-    private static final String SYNC_GATEWAY_URL = "ws://10.4.10.41:4984/prudential";
+    private static String SYNC_GATEWAY_URL = null;
 
     /** Sync Gateway Configuration instance */
     private static SyncGatewayConfig syncGatewayConfig = null;
@@ -42,14 +42,14 @@ public class SyncGatewayConfig {
 
     private SyncGatewayConfig() {
 
-        replicatorConfiguration = replicatorConfiguration();
+        //  replicatorConfiguration = replicatorConfiguration();
     }
 
-    private ReplicatorConfiguration replicatorConfiguration(){
+    private static ReplicatorConfiguration replicatorConfiguration(String url){
 
         try {
             return new ReplicatorConfiguration(DatabaseManager.getDatabase(),
-                    new URLEndpoint(new URI(SYNC_GATEWAY_URL)));
+                    new URLEndpoint(new URI(url)));
         } catch (URISyntaxException e) {
             return null;
         }
@@ -63,8 +63,7 @@ public class SyncGatewayConfig {
      * @return Replicator Instance, either pushReplicator or pullReplicator.
      */
     public static Replicator getPushReplicator(ReadableMap readableMap) {
-        if(syncGatewayConfig == null) {
-            syncGatewayConfig = new SyncGatewayConfig();
+        if(pushReplicator == null) {
             List<String> channels = new ArrayList<>();
             channels.add(readableMap.getString("channel"));
             pushReplicator = new Replicator(replicatorConfiguration
@@ -75,8 +74,7 @@ public class SyncGatewayConfig {
     }
 
     public static Replicator getPullReplicator(ReadableMap readableMap) {
-        if(syncGatewayConfig == null) {
-            syncGatewayConfig = new SyncGatewayConfig();
+        if(pullReplicator == null) {
             List<String> channels = new ArrayList<>();
             channels.add(readableMap.getString("channel"));
             pullReplicator =  new Replicator(replicatorConfiguration
@@ -85,5 +83,15 @@ public class SyncGatewayConfig {
                     .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL));
         }
         return pullReplicator;
+    }
+
+    public static void setSyncGatewayConfig(String url){
+        replicatorConfiguration = replicatorConfiguration(url);
+    }
+
+    public static void reset(){
+        pushReplicator = null;
+        pullReplicator = null;
+        replicatorConfiguration = null;
     }
 }
