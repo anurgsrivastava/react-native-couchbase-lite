@@ -229,7 +229,6 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       });
       /**starting syncing in the background*/
       replicator.start();
-      replicator.removeChangeListener(token); //TODO: should decide on where to call this
   }
 
   @ReactMethod
@@ -264,7 +263,6 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void reset(final Promise promise){
     SyncGatewayConfig.reset();
-    Log.i("reset", "reset called");
     promise.resolve("true");
   }
 
