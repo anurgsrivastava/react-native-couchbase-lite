@@ -125,8 +125,23 @@ const CouchbaseLiteStorage = {
       });
   },
 
-  createDatabase(dbName: string, callback?: ?(error: ?Error) => void): Promise {
-    return CBLiteStorage.createDatabase(dbName)
+  createDatabase(
+    dbConfig: any,
+    callback?: ?(error: ?Error) => void): Promise {
+    return CBLiteStorage.createDatabase(dbConfig)
+      .then(data => {
+        callback && callback(null, data);
+        return data;
+      })
+      .catch(error => {
+        callback && callback(error);
+        if (!callback) throw error;
+      });
+  },
+
+  resetReplicators(
+    callback?: ?(error: ?Error) => void): Promise {
+    return CBLiteStorage.reset()
       .then(data => {
         callback && callback(null, data);
         return data;

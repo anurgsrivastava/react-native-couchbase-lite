@@ -62,6 +62,10 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   private final ReactContext mReactContext;
   private String dbName;
 
+  private static ListenerToken pullListenerToken;
+  private static ListenerToken pushListenerToken;
+
+
   @Override
   public String getName() {
     return "CouchbaseLiteStorage";
@@ -80,10 +84,10 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void createDatabase(String dbName, Promise promise) {
+  public void createDatabase(ReadableMap dbConfig, Promise promise) {
     try{
-      this.dbName = dbName;
-      DatabaseManager.createDatabase(dbName, mReactContext);
+      this.dbName = dbConfig.getString("dbName");
+      DatabaseManager.createDatabase(dbConfig, mReactContext);
       promise.resolve(true);
     }
     catch(CouchbaseLiteException e){
@@ -158,10 +162,11 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       for (Object data : list) {
         Map <String, String> map = (HashMap)data;
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            MutableDocument doc = new MutableDocument(entry.getKey());
+            MutableDocument doc = new MutableDocument(this.dbName+":"+entry.getKey());
             doc.setString(entry.getKey(), entry.getValue());
             doc.setString("key", entry.getKey());
             doc.setString("type", key);
+            doc.setString("channel_name", this.dbName);
             DatabaseManager.getDatabase().save(doc);
         }
       }
@@ -217,6 +222,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
             else if (change.getStatus().getActivityLevel().toString() == "STOPPED" ) {
                 Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
                 Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+                removePushChangeListener(replicator);
                 promise.resolve("true");
             }
           }
@@ -234,7 +240,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       /** keeps track of completed/total documents syncing
        * completed will tell how many documents are synced at the moment
        * total will represent the total count of document to be synced*/
-      replicator.addChangeListener(new ReplicatorChangeListener() {
+    pullListenerToken = replicator.addChangeListener(new ReplicatorChangeListener() {
           @Override
           public void changed(ReplicatorChange change) {
             if (change.getStatus().getError() != null) {
@@ -245,6 +251,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
             else if (change.getStatus().getActivityLevel().toString() == "STOPPED" ){
               Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
               Log.i("message", "Total ::  " + change.getStatus().getProgress().getTotal());
+              removePullChangeListener(replicator);
               promise.resolve("true");
             }
           }
@@ -252,6 +259,21 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       /**starting syncing in the background*/
       replicator.start();
 
+  }
+
+  @ReactMethod
+  public void reset(final Promise promise){
+    SyncGatewayConfig.reset();
+    Log.i("reset", "reset called");
+    promise.resolve("true");
+  }
+
+  private void removePullChangeListener(Replicator replicator){
+    replicator.removeChangeListener(pullListenerToken);
+  }
+
+  private void removePushChangeListener(Replicator replicator){
+    replicator.removeChangeListener(pushListenerToken);
   }
 
   private Map<String, Object> serializeDocument(Document document) {

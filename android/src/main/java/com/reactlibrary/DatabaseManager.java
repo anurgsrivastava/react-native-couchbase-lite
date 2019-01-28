@@ -5,6 +5,7 @@ import android.content.Context;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
+import com.facebook.react.bridge.ReadableMap;
 
 /**
  * The class represent the database configuration responsibe for allocating database
@@ -30,9 +31,10 @@ public class DatabaseManager {
         }
     }
 
-    public static void createDatabase(String dbName, Context context) throws CouchbaseLiteException{
+    public static void createDatabase(ReadableMap dbConfig, Context context) throws CouchbaseLiteException{
         DatabaseConfiguration configuration = new DatabaseConfiguration(context);
-        database = new Database(dbName, configuration);
+        database = new Database(dbConfig.getString("dbName"), configuration);
+        SyncGatewayConfig.setSyncGatewayConfig(dbConfig.getString("url"));
     }
 
     /**
