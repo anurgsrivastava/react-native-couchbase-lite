@@ -189,7 +189,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void removeLocalDocument(String docId, Promise promise) {
+  public void deleteLocalDocument(String docId, Promise promise) {
     Database db = DatabaseManager.getLocalDatabase();
     Document doc = db.getDocument(docId);
     try {
@@ -263,8 +263,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void reset(final Promise promise){
-    SyncGatewayConfig.reset();
-    Log.i("reset", "reset called");
+    SyncGatewayConfig.resetReplicators();
     promise.resolve("true");
   }
 
