@@ -189,7 +189,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void removeLocalDocument(String docId, Promise promise) {
+  public void deleteLocalDocument(String docId, Promise promise) {
     Database db = DatabaseManager.getLocalDatabase();
     Document doc = db.getDocument(docId);
     try {
@@ -212,7 +212,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
       /** keeps track of completed/total documents syncing
        * completed will tell how many documents are synced at the moment
        * total will represent the total count of document to be synced*/
-      ListenerToken token = replicator.addChangeListener(new ReplicatorChangeListener() {
+    pushListenerToken = replicator.addChangeListener(new ReplicatorChangeListener() {
           @Override
           public void changed(ReplicatorChange change) {
             if (change.getStatus().getError() != null) {
@@ -262,7 +262,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void reset(final Promise promise){
-    SyncGatewayConfig.reset();
+    SyncGatewayConfig.resetReplicators();
     promise.resolve("true");
   }
 

@@ -64,8 +64,6 @@ public class SyncGatewayConfig {
      */
     public static Replicator getPushReplicator(ReadableMap readableMap) {
         if(pushReplicator == null) {
-            List<String> channels = new ArrayList<>();
-            channels.add(readableMap.getString("channel"));
             pushReplicator = new Replicator(replicatorConfiguration
                     .setAuthenticator(new SessionAuthenticator(readableMap.getString("replicationSessionKey")))
                     .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH));
@@ -89,7 +87,7 @@ public class SyncGatewayConfig {
         replicatorConfiguration = replicatorConfiguration(url);
     }
 
-    public static void reset(){
+    public static void resetReplicators(){
         pushReplicator = null;
         pullReplicator = null;
         replicatorConfiguration = null;
