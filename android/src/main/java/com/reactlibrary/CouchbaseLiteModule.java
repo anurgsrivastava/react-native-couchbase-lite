@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
-
+import java.lang.String;
 
 import javax.annotation.Nullable;
 
@@ -217,7 +217,8 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
           public void changed(ReplicatorChange change) {
             if (change.getStatus().getError() != null) {
               Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
-              promise.reject("Unable to push data");
+              String errorCode = String.valueOf(change.getStatus().getError().getCode());
+              promise.reject(errorCode);
             }
             else if (change.getStatus().getActivityLevel().toString() == "STOPPED" ) {
                 Log.i("message", "Completed::  " + change.getStatus().getProgress().getCompleted());
@@ -244,7 +245,8 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
           public void changed(ReplicatorChange change) {
             if (change.getStatus().getError() != null) {
               Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
-              promise.reject("Unable to pull data");
+              String errorCode = String.valueOf(change.getStatus().getError().getCode());
+              promise.reject(errorCode);
             }
             //TODO need to send proper error codes back to react side
             else if (change.getStatus().getActivityLevel().toString() == "STOPPED" ){
