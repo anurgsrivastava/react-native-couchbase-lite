@@ -41,29 +41,3 @@ or
   	```
       compile project(':react-native-couchbase-lite')
   	```
-
-## Usage
-```javascript
-import CouchbaseLite, { CBLConnection, CBLConnector } from 'react-native-couchbase-lite'
-
-const cblConnection = new CBLConnection({
-  dbName: 'mydb',
-  syncGatewayUrl: 'http://sg.dummyapp.com/mydb',
-  views: { ... },
-})
-
-export default class App extends React.Component {
-  onButtonClicked() {
-    CouchbaseLite.createDocument({ title: 'New Title', text: 'Description' })
-  }
-
-  render() {
-    return (
-      <CBLConnector connection={cblConnection}>
-        ...
-      </CBLConnector>
-    )
-  }
-}
-To be used differently
-```
