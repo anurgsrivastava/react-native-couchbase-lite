@@ -77,6 +77,7 @@ import CouchbaseLiteSwift
         pushListenerToken = replicator.addChangeListener { (change) in
             if let error = change.status.error as NSError? {
                 print("Error code for Push :: \(error.code)")
+                self.removePushChangeListener(replicator: replicator)
                 completionBlock(error.localizedDescription)
             } else {
                 switch (change.status.activity) {
@@ -104,6 +105,7 @@ import CouchbaseLiteSwift
         pullListenerToken = replicator.addChangeListener { (change) in
             if let error = change.status.error as NSError? {
                 print("Error code for Pull :: \(error.code)")
+                self.removePullChangeListener(replicator: replicator)
                 completionBlock(error.localizedDescription)
             } else {
                 switch (change.status.activity) {
