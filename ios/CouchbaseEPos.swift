@@ -26,11 +26,18 @@ import CouchbaseLiteSwift
         }
     }
     
-    @objc func saveDocument(key: String, data: NSDictionary, completionBlock:((String)->())) -> Void {
+    @objc func saveDocument(key: String, type: String, data: NSString, completionBlock:((String)->())) -> Void {
+//        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+//        print("Document Directory path is :: \(paths)")
+        
         guard let database  = DBManager.shared.getDatabase() else { return completionBlock(Constants.ERROR) }
         
-        let mutableDoc = MutableDocument(id: key)
-        mutableDoc.setData(data as? Dictionary<String, Any>)
+        let idUUID = dbName + ":" + key
+        let mutableDoc = MutableDocument(id: idUUID)
+        mutableDoc.setString(data as String, forKey: key)
+        mutableDoc.setString(key, forKey: "key")
+        mutableDoc.setString(type, forKey: Constants.DOC_TYPE)
+        mutableDoc.setString(dbName, forKey: Constants.CHANNEL_NAME)
         
         do {
             try database.saveDocument(mutableDoc)
@@ -57,7 +64,8 @@ import CouchbaseLiteSwift
         guard let database  = DBManager.shared.getDatabase() else { return completionBlock(Constants.ERROR) }
         
         do {
-            if let docTodl = database.document(withID: key) {
+            let docId = dbName + ":" + key
+            if let docTodl = database.document(withID: docId) {
                 do {
                     try database.deleteDocument(docTodl)
                     completionBlock(Constants.SUCCESS)
@@ -84,6 +92,7 @@ import CouchbaseLiteSwift
                 case .stopped:
                     self.removePushChangeListener(replicator: replicator)
                     completionBlock(Constants.SUCCESS)
+                    print("pushReplicator completed")
                 case .offline:
                     print("pushReplicator offline")
                 case .connecting:
@@ -112,6 +121,7 @@ import CouchbaseLiteSwift
                 case .stopped:
                     self.removePullChangeListener(replicator: replicator)
                     completionBlock(Constants.SUCCESS)
+                    print("pullReplicator completed")
                 case .offline:
                     print("pullReplicator offline")
                 case .connecting:
@@ -150,7 +160,7 @@ import CouchbaseLiteSwift
                 mutableDoc.setString(objDict.value as? String, forKey: objDict.key as! String)
                 mutableDoc.setString((objDict.key as? String)!, forKey: "key")
                 mutableDoc.setString(key, forKey: Constants.DOC_TYPE)
-                mutableDoc.setString( dbName, forKey: Constants.CHANNEL_NAME)
+                mutableDoc.setString(dbName, forKey: Constants.CHANNEL_NAME)
                 
                 do {
                     try database.saveDocument(mutableDoc)

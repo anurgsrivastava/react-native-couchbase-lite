@@ -32,10 +32,11 @@ RCT_EXPORT_METHOD(createDatabase:(nonnull NSDictionary *)dbConfig
 
 #pragma mark doc save get and delete
 RCT_EXPORT_METHOD(saveDocument:(NSString *)key
-                  document:(NSDictionary *)data
+                  type:(NSString *)type
+                  document:(NSString *)data
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
-    [_objCouchbaseEpos saveDocumentWithKey: key data: data completionBlock:^(NSString * strDoc) {
+    [_objCouchbaseEpos saveDocumentWithKey: key type: type data: data completionBlock:^(NSString * strDoc) {
         if ([strDoc isEqualToString:Constants.SUCCESS]) {
             resolve(strDoc);
         } else {
