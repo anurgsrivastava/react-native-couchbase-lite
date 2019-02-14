@@ -70,10 +70,11 @@ const CouchbaseLiteStorage = {
 
   setItem(
     key: string,
+    type: string,
     value: any,
     callback?: ?(error: ?Error) => void
   ): Promise {
-    return CBLiteStorage.saveDocument(key, value)
+    return CBLiteStorage.saveDocument(key, type, value)
       .then(() => callback && callback())
       .catch(error => {
         callback && callback(error);
