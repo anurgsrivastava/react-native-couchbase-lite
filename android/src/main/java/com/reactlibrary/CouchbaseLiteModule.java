@@ -133,9 +133,14 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void saveDocument(String key, ReadableMap data, Promise promise) {
-    MutableDocument doc = new MutableDocument();
-    doc.setData( data.toHashMap() );
+  public void saveDocument(String key, String type, String data, Promise promise) {
+    String docId = this.dbName + ":" + key;
+    MutableDocument doc = new MutableDocument(docId);
+    doc.setString(key, data);
+    doc.setString("key", key);
+    doc.setString("type", type);
+    doc.setString("channel_name", this.dbName);
+
     try {
       DatabaseManager.getDatabase().save(doc);
       promise.resolve(true);
@@ -179,7 +184,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void removeDocument(String docId, Promise promise) {
     Database db = DatabaseManager.getDatabase();
-    Document doc = db.getDocument(docId);
+    Document doc = db.getDocument(this.dbName + ":" + docId);
     try {
       db.delete(doc);
       promise.resolve(true);
