@@ -51,7 +51,8 @@ import CouchbaseLiteSwift
     @objc func getDocument(key: String, completionBlock:((String)->())) {
         guard let database  = DBManager.shared.getDatabase() else { return completionBlock(Constants.ERROR) }
         
-        let list = database.document(withID: key)?.toMutable().string(forKey: key)
+        let idUUID = dbName + ":" + key
+        let list = database.document(withID: idUUID)?.toMutable().string(forKey: key)
         
         if let docList = list {
             completionBlock(docList)
