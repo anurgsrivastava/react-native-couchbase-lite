@@ -97,11 +97,12 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void getDocument(String docId, Promise promise) {
-    Document doc = DatabaseManager.getDatabase().getDocument(docId);
+    Document doc = DatabaseManager.getDatabase().getDocument(this.dbName + ":" + docId);
     if (doc == null) {
       promise.reject("get_document", "Can not find document");
     } else {
-      promise.resolve(ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
+      //promise.resolve(ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
+      promise.resolve(doc.getString(docId));
     }
   }
 
@@ -185,11 +186,15 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   public void removeDocument(String docId, Promise promise) {
     Database db = DatabaseManager.getDatabase();
     Document doc = db.getDocument(this.dbName + ":" + docId);
-    try {
-      db.delete(doc);
+    if(doc != null){
+      try {
+        db.delete(doc);
+        promise.resolve(true);
+      } catch (CouchbaseLiteException e) {
+        promise.reject("delete_document", "Can not delete document", e);
+      }
+    }else{
       promise.resolve(true);
-    } catch (CouchbaseLiteException e) {
-      promise.reject("delete_document", "Can not delete document", e);
     }
   }
 
