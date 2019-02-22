@@ -27,8 +27,8 @@ import CouchbaseLiteSwift
     }
     
     @objc func saveDocument(key: String, type: String, data: NSString, completionBlock:((String)->())) -> Void {
-//        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
-//        print("Document Directory path is :: \(paths)")
+        //        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+        //        print("Document Directory path is :: \(paths)")
         
         guard let database  = DBManager.shared.getDatabase() else { return completionBlock(Constants.ERROR) }
         
@@ -57,7 +57,7 @@ import CouchbaseLiteSwift
         if let docList = list {
             completionBlock(docList)
         } else {
-            completionBlock(Constants.ERROR)
+            completionBlock("")
         }
     }
     

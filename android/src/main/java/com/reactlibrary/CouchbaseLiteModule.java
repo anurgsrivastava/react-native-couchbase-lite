@@ -99,7 +99,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
   public void getDocument(String docId, Promise promise) {
     Document doc = DatabaseManager.getDatabase().getDocument(this.dbName + ":" + docId);
     if (doc == null) {
-      promise.reject("get_document", "Can not find document");
+      promise.resolve("");
     } else {
       //promise.resolve(ConversionUtil.toWritableMap( this.serializeDocument(doc) ) );
       promise.resolve(doc.getString(docId));
