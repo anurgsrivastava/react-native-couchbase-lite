@@ -228,6 +228,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
             if (change.getStatus().getError() != null) {
               Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
               String errorCode = String.valueOf(change.getStatus().getError().getCode());
+              removePushChangeListener(replicator);
               promise.reject(errorCode);
             }
             else if (change.getStatus().getActivityLevel().toString() == "STOPPED" ) {
@@ -256,6 +257,7 @@ public class CouchbaseLiteModule extends ReactContextBaseJavaModule {
             if (change.getStatus().getError() != null) {
               Log.i("message", "Error code ::  " + change.getStatus().getError().getCode());
               String errorCode = String.valueOf(change.getStatus().getError().getCode());
+              removePullChangeListener(replicator);
               promise.reject(errorCode);
             }
             //TODO need to send proper error codes back to react side
