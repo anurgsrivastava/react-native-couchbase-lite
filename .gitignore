@@ -1,5 +1,7 @@
 .gradle
 /build/
+*/bin/*
+/node_modules
 
 # Ignore Gradle GUI config
 gradle-app.setting
